@@ -121,7 +121,7 @@
 <div class="article-gallery">
   <div class="article-gallery-photos">
     
-      <a class="article-gallery-img fancybox" href="/pics/alignment.png" rel="gallery_ckwbs5jri0001tgotfdzi2ypm">
+      <a class="article-gallery-img fancybox" href="/pics/alignment.png" rel="gallery_ckwc76g0i0001lsotcarv82z3">
         <img src="/pics/alignment.png" itemprop="image">
       </a>
     
@@ -369,31 +369,25 @@
   <span class="ico-tags"></span>
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Alignment/" rel="tag">Alignment</a></li></ul>
 
+            
       
-        
-	<div id="comment">
-	
-	<!-- 多说评论框 start -->
-	 <div class="ds-thread" data-thread-key="/2021/11/23/Align-Tools/" data-title="Align Tools" data-url="http://example.com/2021/11/23/Align-Tools/"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"iTimeTraveler"};
-	  (function() {
-	    var ds = document.createElement('script');
-	    ds.type = 'text/javascript';ds.async = true;
-	    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-	    ds.charset = 'UTF-8';
-	    (document.getElementsByTagName('head')[0] 
-	     || document.getElementsByTagName('body')[0]).appendChild(ds);
-	  })();
-	  </script>
-	<!-- 多说公共JS代码 end -->
-	
-	</div>
-	
-<link rel="stylesheet" href="/css/comment.css">
-
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
 
 
       
