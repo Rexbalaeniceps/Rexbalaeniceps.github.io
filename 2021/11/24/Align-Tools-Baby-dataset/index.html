@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Align Tools (Baby dataset) | Sylvanas Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Alignment" />
+  
+  
+  
+  
+  <meta name="description" content="1. 引言鉴于第一次运行的 fast align 和 Giza++ 是在一个大数据集上进行的，不仅耗时巨大，而且结果多的反而让我眼花缭乱，再加之有一些细节地方并没有得以实现，所以我在一个小数据集上再次进行了实验。而为了能够直观地解释对齐关系，我选用了如下数据集：  数据集：newstest2017 ch-en dataset which contains 2001 examples. 预处理：因为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Align Tools (Baby dataset)">
+<meta property="og:url" content="http://example.com/2021/11/24/Align-Tools-Baby-dataset/index.html">
+<meta property="og:site_name" content="Sylvanas Forever">
+<meta property="og:description" content="1. 引言鉴于第一次运行的 fast align 和 Giza++ 是在一个大数据集上进行的，不仅耗时巨大，而且结果多的反而让我眼花缭乱，再加之有一些细节地方并没有得以实现，所以我在一个小数据集上再次进行了实验。而为了能够直观地解释对齐关系，我选用了如下数据集：  数据集：newstest2017 ch-en dataset which contains 2001 examples. 预处理：因为">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example86.png?raw=true">
+<meta property="article:published_time" content="2021-11-24T08:06:58.000Z">
+<meta property="article:modified_time" content="2021-11-24T08:08:43.478Z">
+<meta property="article:author" content="wbxu">
+<meta property="article:tag" content="Alignment">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example86.png?raw=true">
+  
+    <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css" >
+  <link rel="stylesheet" href="/css/fashion.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+
+
+<header id="allheader" class="site-header" role="banner" 
+   >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="149px" height="200px" alt="Hike News" src=" /Syl.jpg">
+              </a>
+            
+          </h1>
+          
+          
+            <div class="site-description">wbxu&#39;s blog</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="/"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="archives"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="categories"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="tags"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="about"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Align-Tools-Baby-dataset" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" target="_blank" href="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example86.png?raw=true" rel="gallery_ckwd8wqt8000094otgtmmh9c8 noopener">
+        <img src="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example86.png?raw=true" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Align Tools (Baby dataset)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2021/11/24/Align-Tools-Baby-dataset/" class="article-date">
+	  <time datetime="2021-11-24T08:06:58.000Z" itemprop="datePublished">November 24, 2021</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/SMT/">SMT</a>
+ 
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-引言"><a href="#1-引言" class="headerlink" title="1. 引言"></a>1. 引言</h3><p>鉴于第一次运行的 fast align 和 Giza++ 是在一个大数据集上进行的，不仅耗时巨大，而且结果多的反而让我眼花缭乱，再加之有一些细节地方并没有得以实现，所以我在一个小数据集上再次进行了实验。而为了能够直观地解释对齐关系，我选用了如下数据集：</p>
+<ul>
+<li>数据集：newstest2017 ch-en dataset which contains 2001 examples.</li>
+<li>预处理：因为是直接从实验室找的，所以所有文本已经被 tokenize 过了。</li>
+</ul>
+<span id="more"></span>
+
+
+
+<h3 id="2-Fast-Align"><a href="#2-Fast-Align" class="headerlink" title="2. Fast Align"></a>2. Fast Align</h3><h4 id="1-实验过程"><a href="#1-实验过程" class="headerlink" title="1. 实验过程"></a>1. 实验过程</h4><p>参考 <a target="_blank" rel="noopener" href="https://www.sylvanas.com.cn/2021/11/23/Align-Tools/#more">Align Tools</a> 即可。</p>
+<h4 id="2-错误解决"><a href="#2-错误解决" class="headerlink" title="2. 错误解决"></a>2. 错误解决</h4><ol>
+<li><p>– Could NOT find SparseHash (missing: SPARSEHASH_INCLUDE_DIR)</p>
+<ul>
+<li>即使去安装 sparsehash 也是失败的，所以暂时没找到解决方法</li>
+<li>但好像不解决这个也能够继续下去</li>
+</ul>
+</li>
+<li><p>如何检查自己的 fast align 是否已安装完成</p>
+<ul>
+<li>输入下列指令 <code>/data1/wbxu/fast_align/build/fast_align</code></li>
+<li>返回如下结果即表明安装完成<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Usage: /data1/wbxu/fast_align/build/fast_align -i file.fr-en</span><br><span class="line"> Standard options ([USE] = strongly recommended):</span><br><span class="line">  -i: [REQ] Input parallel corpus</span><br><span class="line">  -v: [USE] Use Dirichlet prior on lexical translation distributions</span><br><span class="line">  -d: [USE] Favor alignment points close to the monotonic diagonoal</span><br><span class="line">  -o: [USE] Optimize how close to the diagonal alignment points should be</span><br><span class="line">  -r: Run alignment <span class="keyword">in</span> reverse (condition on target and predict <span class="built_in">source</span>)</span><br><span class="line">  -c: Output conditional probability table</span><br><span class="line"> Advanced options:</span><br><span class="line">  -I: number of iterations <span class="keyword">in</span> EM training (default = 5)</span><br><span class="line">  -q: p_null parameter (default = 0.08)</span><br><span class="line">  -N: No null word</span><br><span class="line">  -a: alpha parameter <span class="keyword">for</span> optional Dirichlet prior (default = 0.01)</span><br><span class="line">  -T: starting lambda <span class="keyword">for</span> diagonal distance parameter (default = 4)</span><br><span class="line">  -s: <span class="built_in">print</span> alignment scores (alignment ||| score, disabled by default)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<h4 id="3-结果分析"><a href="#3-结果分析" class="headerlink" title="3. 结果分析"></a>3. 结果分析</h4><h5 id="1-执行输出日志分析"><a href="#1-执行输出日志分析" class="headerlink" title="1. 执行输出日志分析"></a>1. 执行输出日志分析</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ITERATION 5 (FINAL)</span><br><span class="line">  log_e likelihood: -203555</span><br><span class="line">  log_2 likelihood: -293667</span><br><span class="line">     cross entropy: 6.49534</span><br><span class="line">        perplexity: 90.2178</span><br><span class="line">      posterior p0: 0</span><br><span class="line"> posterior al-feat: 0</span><br><span class="line"></span><br><span class="line">ITERATION 5 (FINAL)</span><br><span class="line">  log_e likelihood: -223478</span><br><span class="line">  log_2 likelihood: -322411</span><br><span class="line">     cross entropy: 6.07383</span><br><span class="line">        perplexity: 67.3607</span><br><span class="line">      posterior p0: 0</span><br><span class="line"> posterior al-feat: 0</span><br><span class="line">       size counts: 728</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>虽然，随着 EM 算法的执行，整个对齐的困惑度在不断下降，但是无论是前向对齐还是逆向对齐，它们**最终的困惑度都很高 (≈90, 67)**；</li>
+<li><strong>最终的的负对数似然也很高</strong>；</li>
+<li>其他的参数尚不明了，因此不作分析。</li>
+</ol>
+<h5 id="2-句内对齐分析"><a href="#2-句内对齐分析" class="headerlink" title="2. 句内对齐分析"></a>2. 句内对齐分析</h5><ol>
+<li>fast align 的输出结果是以<strong>位置间对齐映射关系的形式存储</strong>的，这虽然对于机器是友好的，但是对于人类是极其不友好的，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(Source-Target) 0-0 0-1 2-2 4-3 5-4 6-5 7-6 9-7 11-8 11-9</span><br><span class="line">(Source-Target) 9-0 2-1 2-2 5-3 12-4 7-5 0-6 1-7 5-8 12-9 25-10 14-11 15-12 12-13 17-14 22-15 21-16 23-17 20-18 23-19</span><br></pre></td></tr></table></figure></li>
+<li>我们同时执行了源语言到目标语言的对齐和目标语言到源语言的对齐，而这<strong>两个方向的对齐并不是完全可逆的</strong>；En→Zh 方向上，’28’对齐到’岁’，而 Zh→En 方向上，’岁’对齐到‘@-@’，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(Source-Target) 28-28 28-岁 Year-厨师 Old-被 Chef-发现 Found-死 Dead-于 San-旧金山 Mal-一家 Mal-商		</span><br><span class="line">(Target-Source) 28-28 岁-@-@ 厨师-Year 岁-@-@ 厨师-Old 发现-Chef 死-Found 死-Dead 旧金山-at 旧金山-San 旧金山-Francisco 商-Mal		</span><br></pre></td></tr></table></figure></li>
+<li>我们发现<strong>tokenized数据会对 fast align 的对齐过程增加噪声</strong>；‘@-@’ 是一个子词表示，而正常来说，同一个单词的所有子词应该是对齐同一个单词或同样的几个单词的，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(Source-Target) recently-近日 @-@-刚 @-@-搬 old-至 San-旧金山 who-的 a-一位 28-28 old-岁 San-厨师 week-本周 was-被 found-发现 </span><br></pre></td></tr></table></figure></li>
+<li>在同一个句子内，诚然 fast align 建模了一些正确的对齐关系，但是<strong>错误的对齐映射关系也不少，甚至在有些句子中错误的数量超过了正确的数量</strong>，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(Source-Target) to-针对 government-政府 &amp;apos;s-的 silence-沉默 to-态度 ,-，	JDC-初级 JDC-医生 JDC-委员会 JDC-执行 JDC-委员会 has-已 today-今日 formal-正式 request-要求 BMA-英国 BMA-医学 BMA-协会 a-理事会 meeting-召开 special-特别 meeting-会议 authorise-批准 to-旨在 programme-九月初 beginning-开始 of-升级 industrial-劳工 action-行动 of-的 a-一项 </span><br><span class="line">(Source-Target) rejected-参与 rejected-投票 by-的 58-成员 of-中 of-, members-58% rejected-反对 the-该 ballot-合同 ballot-交易 </span><br></pre></td></tr></table></figure></li>
+<li>不难发现，fast align 会将<strong>同一个单词对应多个目标单词，而这里面可能只有一个是对的，甚至一个对的都没有</strong>，给人一种蒙的感觉，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(Target-Source) 该-the 数字-number 已-has 大幅-slumped 大幅-by 近-almost 90%-90 90%-% </span><br><span class="line">(Source-Target) her-拜 her-尔斯 in-因此 puts-跻身 like-像 puts-迈克尔 @-@-- league-菲尔 league-普斯 @-@-( @-@-Michael @-@-Phelps @-@-) like-一样 @-@-的 a-“ @-@-几十年 @-@-一遇 athletes-运动员 @-@-” who-的 Michael-行列 their-他们 to-将 Phelps-各自 their-的 sports-体育项目 sports-提升 to-到 new-新 heights-高度 </span><br></pre></td></tr></table></figure></li>
+</ol>
+<h5 id="3-所有对齐分析"><a href="#3-所有对齐分析" class="headerlink" title="3. 所有对齐分析"></a>3. 所有对齐分析</h5><p>首先，我们需要编写python程序来统计某个单词一共对齐哪些单词，我写的代码如下 (注：由于欠考虑原始的’-‘符号等原因，结果中会存在一定的错误，但是总体来说，已经能够反映出 fast align 的对齐情况了)：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mapping</span>(<span class="params">file, output</span>):</span></span><br><span class="line">    text = []</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        content = f.readlines()</span><br><span class="line"></span><br><span class="line">    length = <span class="built_in">len</span>(content)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length):</span><br><span class="line">        text.append(content[i].split())</span><br><span class="line"></span><br><span class="line">    mappings = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(length):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(text[i])):</span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(text[i][j])):</span><br><span class="line">                <span class="keyword">if</span> text[i][j][k] == <span class="string">&quot;-&quot;</span>:</span><br><span class="line">                    key = text[i][j][:k]</span><br><span class="line">                    value = text[i][j][k+<span class="number">1</span>:]</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">if</span> key <span class="keyword">not</span> <span class="keyword">in</span> mappings.keys():</span><br><span class="line">                mappings[key] = [value, ]</span><br><span class="line">            <span class="keyword">elif</span> value <span class="keyword">not</span> <span class="keyword">in</span> mappings[key]:</span><br><span class="line">                mappings[key].append(value)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(output, <span class="string">&quot;w&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> key, value <span class="keyword">in</span> mappings.items():</span><br><span class="line">            f.write(<span class="built_in">str</span>(key) + <span class="built_in">str</span>(value) + <span class="string">&quot;\n&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>上述程序执行之后就可以得到所有单词的所有对齐情况了，于是我们又发现了如下的问题：</p>
+<ol>
+<li>fast align <strong>能够建模正确的对齐关系</strong>，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">recently [&#x27;近日&#x27;, &#x27;最近&#x27;, &#x27;连日来&#x27;, &#x27;日前&#x27;, &#x27;近期&#x27;]</span><br><span class="line">八个 [&#x27;eight&#x27;]</span><br></pre></td></tr></table></figure></li>
+<li>但是，在某个单词的<strong>所有对齐关系中存在着很多的不正确对齐关系</strong>，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">friends [&#x27;朋友&#x27;, &#x27;表达&#x27;, &#x27;深切&#x27;, &#x27;政变&#x27;, &#x27;亲朋好友&#x27;, &#x27;日子&#x27;, &#x27;误会&#x27;, &#x27;段时间&#x27;, &#x27;交流&#x27;]</span><br><span class="line">发现 [&#x27;Chef&#x27;, &#x27;found&#x27;, &#x27;in&#x27;, &#x27;that&#x27;, &#x27;find&#x27;, &#x27;body&#x27;, &#x27;continues&#x27;, &#x27;was&#x27;]</span><br></pre></td></tr></table></figure></li>
+<li><strong>有一些单词甚至没有正确的对齐关系</strong>，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">weighing [&#x27;战术&#x27;, &#x27;理性&#x27;]</span><br><span class="line">验尸官[&#x27;body&#x27;, &#x27;Westfield&#x27;]</span><br></pre></td></tr></table></figure></li>
+<li>句子中的<strong>标点符号能够作为一种噪声存在</strong>，它对齐了很多非标点符号的(子)词，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.[&#x27;。&#x27;, &#x27;时&#x27;, &#x27;，&#x27;, &#x27;”&#x27;, &#x27;都&#x27;, &#x27;食物&#x27;, &#x27;没想到&#x27;, &#x27;了&#x27;, &#x27;方式&#x27;, &#x27;；&#x27;, &#x27;的&#x27;, &#x27;这个&#x27;, &#x27;直播&#x27;, &#x27;保存&#x27;, &#x27;女士&#x27;, &#x27;用品&#x27;, &#x27;故&#x27;, &#x27;货品&#x27;, &#x27;非常&#x27;, &#x27;就&#x27;, &#x27;才&#x27;, &#x27;岁&#x27;, &#x27;地&#x27;, &#x27;跟&#x27;, &#x27;无小事&#x27;, &#x27;我&#x27;, &#x27;,&#x27;, &#x27;不&#x27;, &#x27;外地&#x27;, &#x27;防晒&#x27;, &#x27;常见&#x27;, &#x27;交工&#x27;, &#x27;特点&#x27;, &#x27;几句&#x27;, &#x27;事情&#x27;, &#x27;能力&#x27;, &#x27;职位&#x27;, &#x27;扮&#x27;, &#x27;很&#x27;]</span><br><span class="line">,[&#x27;，&#x27;, &#x27;为&#x27;, &#x27;美国广播公司&#x27;, &#x27;KGO&#x27;, &#x27;波士顿&#x27;, &#x27;同时&#x27;, &#x27;在&#x27;, &#x27;烹饪&#x27;, &#x27;主席&#x27;, &#x27;一贯&#x27;, &#x27;感觉&#x27;, &#x27;的&#x27;, &#x27;政府&#x27;, &#x27;举行&#x27;, &#x27;。&#x27;, &#x27;顿&#x27;, &#x27;网球&#x27;, &#x27;例如&#x27;, &#x27;、&#x27;, &#x27;Co&#x27;, &#x27;您&#x27;, &#x27;已&#x27;, &#x27;这些&#x27;, &#x27;3&#x27;, &#x27;道&#x27;, &#x27;其中&#x27;, &#x27;比赛&#x27;, &#x27;真正&#x27;, &#x27;还是&#x27;, &#x27;年&#x27;, &#x27;表现&#x27;, &#x27;前&#x27;, &#x27;·&#x27;, &#x27;岁&#x27;, &#x27;后&#x27;, &#x27;了&#x27;, &#x27;（&#x27;, &#x27;）&#x27;, &#x27;请求&#x27;, &#x27;是&#x27;, &#x27;(&#x27;, &#x27;重新&#x27;, &#x27;他&#x27;, &#x27;之后&#x27;, &#x27;进行&#x27;, &#x27;表演&#x27;, &#x27;还有&#x27;, &#x27;分别&#x27;, &#x27;事实&#x27;, &#x27;但&#x27;, &#x27;腹部&#x27;, &#x27;部位&#x27;, &#x27;被&#x27;, &#x27;从&#x27;, &#x27;其次&#x27;, &#x27;里面&#x27;, &#x27;包含&#x27;, &#x27;犹太教&#x27;, &#x27;天主教&#x27;, &#x27;科&#x27;, &#x27;精彩绝伦&#x27;, &#x27;主要&#x27;, &#x27;差旅&#x27;, &#x27;服装&#x27;, &#x27;包括&#x27;, &#x27;教练&#x27;, &#x27;这&#x27;, &#x27;影响&#x27;, &#x27;中&#x27;, &#x27;15&#x27;, &#x27;丽埃勒及&#x27;, &#x27;参与&#x27;, &#x27;成本&#x27;, &#x27;课程&#x27;, &#x27;提纲&#x27;, &#x27;认知&#x27;, &#x27;进修&#x27;, &#x27;性别&#x27;, &#x27;重视&#x27;, &#x27;时间&#x27;, &#x27;罹患&#x27;, &#x27;评估&#x27;, &#x27;教授&#x27;, &#x27;但是&#x27;, &#x27;任&#x27;, &#x27;少数&#x27;, &#x27;族裔&#x27;, &#x27;移民&#x27;, &#x27;然而&#x27;, &#x27;从小&#x27;, &#x27;很&#x27;, &#x27;体操选手&#x27;, &#x27;安娜&#x27;, &#x27;Jennifer&#x27;, &#x27;Carpenter&#x27;, &#x27;盖&#x27;, &#x27;开始&#x27;, &#x27;现年&#x27;, &#x27;分&#x27;, &#x27;57&#x27;, &#x27;这种&#x27;, &#x27;镇&#x27;, &#x27;说&#x27;, &#x27;枪手&#x27;, &#x27;当&#x27;, &#x27;内&#x27;, &#x27;棍&#x27;, &#x27;要&#x27;, &#x27;人们&#x27;, &#x27;其&#x27;, &#x27;在内&#x27;, &#x27;理发&#x27;, &quot;&#x27;&quot;, &#x27;斯&#x27;, &#x27;目前&#x27;, &#x27;日前&#x27;, &#x27;自然&#x27;, &#x27;,&#x27;, &#x27;带来&#x27;, &#x27;其实&#x27;, &#x27;发微博&#x27;, &#x27;玩游戏&#x27;, &#x27;逛&#x27;, &#x27;需要&#x27;, &#x27;：&#x27;, &#x27;种植&#x27;, &#x27;个&#x27;, &#x27;股份&#x27;, &#x27;锦州市&#x27;, &#x27;大有&#x27;, &#x27;滨海公路&#x27;, &#x27;段&#x27;, &#x27;1&#x27;, &#x27;号&#x27;, &#x27;11&#x27;, &#x27;有&#x27;, &#x27;都&#x27;, &#x27;不久&#x27;, &#x27;打出&#x27;, &#x27;加上&#x27;, &#x27;无论是&#x27;, &#x27;见面&#x27;, &#x27;自己&#x27;, &#x27;家中&#x27;, &#x27;成立&#x27;, &#x27;保障&#x27;, &#x27;握&#x27;, &#x27;手心&#x27;, &#x27;轻飘飘&#x27;, &#x27;一小撮&#x27;, &#x27;百万元&#x27;, &#x27;海关&#x27;, &#x27;较&#x27;, &#x27;决定&#x27;, &#x27;部&#x27;, &#x27;总导演&#x27;, &#x27;一声令下&#x27;, &#x27;武警&#x27;, &#x27;和田&#x27;, &#x27;阿克苏&#x27;, &#x27;三地&#x27;, &#x27;部队&#x27;, &#x27;导调&#x27;, &#x27;指令&#x27;, &#x27;环绕&#x27;, &#x27;所以&#x27;, &#x27;质量&#x27;, &#x27;稀薄&#x27;, &#x27;车&#x27;, &#x27;总体&#x27;, &#x27;不断&#x27;, &#x27;行政院长&#x27;, &#x27;昨天上午&#x27;, &#x27;刚好&#x27;, &#x27;真的&#x27;, &#x27;一切&#x27;, &#x27;金牌&#x27;, &#x27;其间&#x27;, &#x27;比如说&#x27;, &#x27;多个&#x27;, &#x27;转而&#x27;, &#x27;运动员&#x27;, &#x27;)&#x27;, &#x27;监狱&#x27;, &#x27;时&#x27;, &#x27;地区&#x27;, &#x27;支队长&#x27;, &#x27;马琪&#x27;, &#x27;新闻&#x27;, &#x27;指标&#x27;, &#x27;情况&#x27;, &#x27;所在&#x27;, &#x27;39&#x27;, &#x27;格雷&#x27;, &#x27;如今&#x27;, &#x27;中部&#x27;, &#x27;厘米&#x27;, &#x27;等&#x27;, &#x27;随着&#x27;, &#x27;日&#x27;, &#x27;收到&#x27;, &#x27;仍&#x27;, &#x27;次&#x27;, &#x27;品类&#x27;, &#x27;涵盖&#x27;, &#x27;建材&#x27;, &#x27;轻工产品&#x27;, &#x27;出台&#x27;, &#x27;加大&#x27;, &#x27;引进&#x27;, &#x27;220&#x27;, &#x27;近期&#x27;, &#x27;方面&#x27;, &#x27;之声&#x27;, &#x27;基础&#x27;, &#x27;喀山&#x27;, &#x27;世锦赛&#x27;, &#x27;和&#x27;, &#x27;各种&#x27;, &#x27;宁泽涛&#x27;, &#x27;奠定&#x27;, &#x27;田亮&#x27;, &#x27;去&#x27;, &#x27;而&#x27;, &#x27;伦敦&#x27;, &#x27;功成身退&#x27;, &#x27;甚至&#x27;, &#x27;比如&#x27;, &#x27;快&#x27;, &#x27;回复&#x27;, &#x27;却&#x27;, &#x27;查&#x27;, &#x27;车辆&#x27;, &#x27;整治&#x27;, &#x27;看病&#x27;, &#x27;监管&#x27;, &#x27;存在&#x27;, &#x27;于&#x27;, &#x27;采访&#x27;, &#x27;四川&#x27;, &#x27;绵阳&#x27;, &#x27;往下沉&#x27;, &#x27;小时候&#x27;, &#x27;学过&#x27;, &#x27;坚持&#x27;, &#x27;足球&#x27;, &#x27;篮球&#x27;, &#x27;排球&#x27;, &#x27;自行车&#x27;, &#x27;摔跤&#x27;, &#x27;武术&#x27;, &#x27;市场运作&#x27;, &#x27;节俭办&#x27;, &#x27;同年&#x27;, &#x27;时许&#x27;, &#x27;房间内&#x27;, &#x27;研究&#x27;, &#x27;保持&#x27;, &#x27;8&#x27;, &#x27;再&#x27;, &#x27;主导&#x27;, &#x27;分析&#x27;, &#x27;把&#x27;, &#x27;强&#x27;, &#x27;科技&#x27;, &#x27;还&#x27;, &#x27;增加&#x27;, &#x27;设有&#x27;, &#x27;节日&#x27;, &#x27;布置&#x27;, &#x27;７&#x27;, &#x27;三亚市&#x27;, &#x27;对&#x27;, &#x27;他会&#x27;, &#x27;欧文&#x27;, &#x27;操刀&#x27;, &#x27;助攻&#x27;, &#x27;拦截&#x27;, &#x27;意甲&#x27;, &#x27;法甲&#x27;, &#x27;王国&#x27;, &#x27;抢断&#x27;, &#x27;配合&#x27;, &#x27;跑动&#x27;, &#x27;无懈可击&#x27;, &#x27;现在&#x27;, &#x27;担任&#x27;, &#x27;训练&#x27;, &#x27;这周&#x27;, &#x27;不好&#x27;, &#x27;功能&#x27;, &#x27;针对&#x27;, &#x27;照片&#x27;, &#x27;推特&#x27;, &#x27;各色&#x27;, &#x27;人种&#x27;, &#x27;表示&#x27;, &#x27;负责&#x27;, &#x27;战争&#x27;, &#x27;国防&#x27;, &#x27;位于&#x27;, &#x27;错误&#x27;, &#x27;结果&#x27;, &#x27;伊拉克&#x27;, &#x27;维和部队&#x27;, &#x27;降低&#x27;, &#x27;格雷戈里&#x27;, &#x27;撰写&#x27;, &#x27;一篇&#x27;, &#x27;文章&#x27;, &#x27;文中&#x27;, &#x27;布什&#x27;, &#x27;不顾&#x27;, &#x27;未尝&#x27;, &#x27;败绩&#x27;, &#x27;巴姆&#x27;, &#x27;上&#x27;, &#x27;作为&#x27;, &#x27;菜&#x27;, &#x27;共同&#x27;, &#x27;本书&#x27;, &#x27;三明治&#x27;, &#x27;们&#x27;, &#x27;并&#x27;, &#x27;至&#x27;, &#x27;发布&#x27;, &#x27;奶油&#x27;, &#x27;补充&#x27;, &#x27;果脯&#x27;, &#x27;赞加&#x27;, &#x27;沉得&#x27;, &#x27;下心&#x27;, &#x27;公司&#x27;, &#x27;形式&#x27;, &#x27;在线&#x27;, &#x27;学习&#x27;, &#x27;不仅&#x27;, &#x27;而且&#x27;, &#x27;如遇&#x27;, &#x27;9&#x27;, &#x27;章&#x27;, &#x27;法制&#x27;, &#x27;层面&#x27;, &#x27;框架&#x27;, &#x27;军力&#x27;, &#x27;文化公园&#x27;, &#x27;金额&#x27;, &#x27;奥马哈&#x27;, &#x27;巴克&#x27;, &#x27;所有&#x27;, &#x27;尤其&#x27;, &#x27;特&#x27;, &#x27;女子组&#x27;, &#x27;洛特&#x27;, &#x27;乔&#x27;, &#x27;埃莉诺&#x27;, &#x27;孩子&#x27;, &#x27;培养&#x27;, &#x27;朋友&#x27;, &#x27;总需求&#x27;, &#x27;减弱&#x27;, &#x27;海南省&#x27;, &#x27;路&#x27;, &#x27;走&#x27;, &#x27;天津&#x27;, &#x27;甘肃&#x27;, &#x27;省市&#x27;, &#x27;实施细则&#x27;, &#x27;即&#x27;, &#x27;经查&#x27;, &#x27;迎战&#x27;, &#x27;得到&#x27;, &#x27;拍照&#x27;, &#x27;通过&#x27;, &#x27;人中&#x27;, &#x27;法律咨询&#x27;, &#x27;代理服务&#x27;, &#x27;拒&#x27;, &#x27;巨额&#x27;, &#x27;债务&#x27;, &#x27;分崩离析&#x27;, &#x27;这位&#x27;, &#x27;名叫&#x27;, &#x27;预算&#x27;, &#x27;T5&#x27;, &#x27;由&#x27;, &#x27;来&#x27;, &#x27;无水&#x27;, &#x27;激情&#x27;, &#x27;过&#x27;, &#x27;太阳系&#x27;, &#x27;诸多方面&#x27;]</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="3-GIZA"><a href="#3-GIZA" class="headerlink" title="3. GIZA++"></a>3. GIZA++</h3><h4 id="1-实验过程-1"><a href="#1-实验过程-1" class="headerlink" title="1. 实验过程"></a>1. 实验过程</h4><p>参考 <a target="_blank" rel="noopener" href="https://www.sylvanas.com.cn/2021/11/23/Align-Tools/#more">Align Tools</a> 即可。</p>
+<h4 id="2-错误解决-1"><a href="#2-错误解决-1" class="headerlink" title="2. 错误解决"></a>2. 错误解决</h4><ol>
+<li><p>align_sym.py 文件无法正常运行</p>
+<ul>
+<li>需要使用 python2 的环境来运行，使用 conda 即可创建 python2 的虚拟环境</li>
+</ul>
+</li>
+<li><p>align_plot.py 文件无法正常运行</p>
+<ul>
+<li>使用之前创建好的 python2 环境</li>
+<li>下载依赖包 numpy 和 matplotlib</li>
+<li>下载 sans-serif 字体，否则中文将无法正常显示</li>
+</ul>
+</li>
+<li><p>下载 simhei 字体</p>
+<ul>
+<li>从网站 <a target="_blank" rel="noopener" href="https://www.fontpalace.com/font-download/SimHei/">fontpalace</a> 下载 SimHei 字体文件</li>
+<li>找到存放字体文件的目录, 大约为<code>~/matplotlib/mpl-data/fonts/ttf</code>，可通过下列代码找到：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="built_in">print</span>(matplotlib.matplotlib_fname())</span><br></pre></td></tr></table></figure></li>
+<li>将文件 simhei.ttf 存放入 ~/fonts/ttf 目录下</li>
+<li>将如下代码添加到文件 <code>matplotlibrc</code> 中去<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">font.family			 : sans-serif</span><br><span class="line">font.sans-serif		 : SimHei</span><br><span class="line">axes.unicode_minus   : False</span><br></pre></td></tr></table></figure></li>
+<li>删除缓存中已生成的 matplotlib 目录，大约为 <code>~/.cache/matplotlib</code></li>
+<li>使用下述命令重启虚拟环境<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">conda deactivate</span><br><span class="line">conda activate python2</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<h4 id="3-结果分析-1"><a href="#3-结果分析-1" class="headerlink" title="3. 结果分析"></a>3. 结果分析</h4><ol>
+<li><strong>许多文件的不明所以</strong>，完全没有任何提示信息，对新手极其不友好，如下:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">en2ch.a3.final:</span><br><span class="line">1 1 2 100 1</span><br><span class="line">1 2 2 100 1</span><br><span class="line">2 3 2 100 1</span><br><span class="line">2 4 2 100 1</span><br><span class="line">1 1 3 100 0.777338</span><br><span class="line">3 1 3 100 0.222662</span><br><span class="line">1 2 3 100 0.443757</span><br></pre></td></tr></table></figure></li>
+<li>en2ch.perp 文件表示的是困惑度，不难发现虽然困惑度呈现逐步下降趋势，但是<strong>最终的困惑度仍然很高</strong>，而且 <strong>HMM 的困惑度很接近于 Model 4 的困惑度</strong>；无独有偶，在之前的大数据集上 <strong>HMM 的困惑度甚至低于 Model 4 的困惑度</strong>，这一点是令我不解的，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#trnsz	tstsz	iter	model		trn-pp		test-pp		trn-vit-pp		tst-vit-pp</span><br><span class="line">2001	0		0		Model1		11770.9		N/A			inf				N/A</span><br><span class="line">2001	0		1		Model1		112.831		N/A			745.31			N/A</span><br><span class="line">2001	0		2		Model1		81.2514		N/A			413.337			N/A</span><br><span class="line">2001	0		3		Model1		67.9365		N/A			271.741			N/A</span><br><span class="line">2001	0		4		Model1		61.7402		N/A			211.242			N/A</span><br><span class="line">2001	0		5		HMM			58.0343		N/A			180.88			N/A</span><br><span class="line">2001	0		6		HMM			52.6243		N/A			91.7463			N/A</span><br><span class="line">2001	0		7		HMM			38.5041		N/A			54.2244			N/A</span><br><span class="line">2001	0		8		HMM			28.8229		N/A			36.4591			N/A</span><br><span class="line">2001	0		9		HMM			23.8012		N/A			28.4325			N/A</span><br><span class="line">2001	0		10		THTo3		20.6636		N/A			22.4276			N/A</span><br><span class="line">2001	0		11		Model3		47.6184		N/A			50.2598			N/A</span><br><span class="line">2001	0		12		Model3		42.8841		N/A			44.75			N/A</span><br><span class="line">2001	0		13		Model3		41.4157		N/A			43.0298			N/A</span><br><span class="line">2001	0		14		Model3		40.4792		N/A			41.9223			N/A</span><br><span class="line">2001	0		15		T3To4		39.7868		N/A			41.1109			N/A</span><br><span class="line">2001	0		16		Model4		21.8971		N/A			22.3101			N/A</span><br><span class="line">2001	0		17		Model4		20.2356		N/A			20.5329			N/A</span><br><span class="line">2001	0		18		Model4		19.7004		N/A			19.9528			N/A</span><br><span class="line">2001	0		19		Model4		19.3744		N/A			19.6003			N/A</span><br></pre></td></tr></table></figure></li>
+<li>en2ch.a3.final 文件中的内容形式如下：$i\ j\ l\ m\ p(i/j, l, m)$，其中 $i$ 表示源语言 token 的位置；$j$ 表示目标语言 token 的位置；$l$ 表示源语言句子长度；$m$ 表示目标语言句子长度；$p(i/j, l, m)$ 表示 $i$ 位置上的源语言 token 被翻译到目标语言 $j$ 位置上 token 的概率；总的来说，这个文件应该可以解决对齐中的重排序问题(reordering)，<strong>粗略看一了下还是比较邻近的位置上的reordering概率比较大</strong>，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">64 49 64 100 1</span><br><span class="line">64 50 64 100 1</span><br><span class="line">64 51 64 100 1</span><br><span class="line">64 52 64 100 1</span><br><span class="line">63 53 64 100 1</span><br><span class="line">63 54 64 100 1</span><br><span class="line">61 55 64 100 1</span><br><span class="line">61 56 64 100 1</span><br><span class="line">0 57 64 100 1</span><br><span class="line">61 58 64 100 1</span><br><span class="line">5 1 66 100 1</span><br><span class="line">8 2 66 100 1</span><br><span class="line">9 3 66 100 1</span><br><span class="line">0 4 66 100 1</span><br><span class="line">33 5 66 100 1</span><br><span class="line">33 6 66 100 1</span><br><span class="line">33 7 66 100 1</span><br></pre></td></tr></table></figure></li>
+<li>en2ch.n3.final 文件表示的是各个 token 的繁殖力概率，<strong>很多单词的繁殖力还是主要集中在 0、1、2 这些数字上</strong>，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2 0.790922 0.163175 0.0374083 0.00353707 0.00180963 0.00064888 0.00153155 0.000358334 0.000246704 0.000363033 </span><br><span class="line">3 0.967959 0.0279171 0.00146716 0.000960575 0.000645714 0.000464062 0.000311298 0.000119431 7.17008e-05 8.35965e-05 </span><br><span class="line">4 0.628078 0.223453 0.0939839 0.0166623 0.0138697 0.00923218 0.00555119 0.00400141 0.00302904 0.00213859 </span><br><span class="line">5 0.828264 0.123534 0.0269111 0.00769915 0.00517549 0.00371953 0.0024951 0.000957258 0.000574693 0.000670038 </span><br><span class="line">6 0.647396 0.229846 0.066597 0.017175 0.0142964 0.00951625 0.005722 0.00412453 0.00312224 0.00220439 </span><br><span class="line">7 0.519123 0.307894 0.0652615 0.0394383 0.0267116 0.0176144 0.0104919 0.00504176 0.00457916 0.003845 </span><br></pre></td></tr></table></figure></li>
+<li>en2ch.t3.final 文件是 IBM Model 3 的翻译表，en2ch.d4.final 文件是 IBM Model 4 的翻译表，由于是 ids 间的对齐，并不直观，如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0 16 0.382958</span><br><span class="line">0 33 0.446021</span><br><span class="line">0 40 0.0668341</span><br><span class="line">0 41 6.36139e-07</span><br><span class="line">0 72 0.0955234</span><br><span class="line">0 96 0.00204612</span><br><span class="line">0 491 0.000162388</span><br><span class="line">0 696 6.19271e-06</span><br><span class="line">0 737 0.00643965</span><br></pre></td></tr></table></figure></li>
+<li>en2ch.A3.final 文件是单向对齐文件，其中的数字代表了 token 在目标句中的位置，下标从 1 开始；如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#Sentence pair (1) source length 12 target length 10 alignment score : 3.26715e-14</span><br><span class="line">28 岁 厨师 被 发现 死 于 旧金山 一家 商 </span><br><span class="line">NULL (&#123; &#125;) 28 (&#123; 1 &#125;) @-@ (&#123; &#125;) Year (&#123; &#125;) @-@ (&#123; &#125;) Old (&#123; &#125;) Chef (&#123; &#125;) Found (&#123; &#125;) Dead (&#123; 2 3 4 5 6 &#125;) at (&#123; &#125;) San (&#123; 8 &#125;) Francisco (&#123; 7 &#125;) Mal (&#123; 9 10 &#125;) </span><br><span class="line">#Sentence pair (2) source length 26 target length 20 alignment score : 3.26866e-28</span><br><span class="line">近日 刚 搬 至 旧金山 的 一位 28 岁 厨师 本周 被 发现 死 于 当地 一家 商场 的 楼梯间 </span><br><span class="line">NULL (&#123; 6 19 &#125;) a (&#123; &#125;) 28 (&#123; 8 &#125;) @-@ (&#123; &#125;) year (&#123; &#125;) @-@ (&#123; &#125;) old (&#123; 9 &#125;) chef (&#123; 10 &#125;) who (&#123; &#125;) had (&#123; &#125;) recently (&#123; &#125;) moved (&#123; &#125;) to (&#123; &#125;) San (&#123; &#125;) Francisco (&#123; 14 15 &#125;) was (&#123; &#125;) found (&#123; 13 &#125;) dead (&#123; &#125;) in (&#123; &#125;) the (&#123; &#125;) stairwell (&#123; 1 2 3 4 5 7 &#125;) of (&#123; &#125;) a (&#123; &#125;) local (&#123; 16 &#125;) mall (&#123; 12 17 18 20 &#125;) this (&#123; &#125;) week (&#123; 11 &#125;) </span><br></pre></td></tr></table></figure></li>
+<li>如上，<strong>GIZA++ 能够找出正确的对齐关系</strong>，如 <code>28-28</code> <code>week-本周</code> 等；</li>
+<li>如上，<strong>GIZA++ 也构造了错误的对齐关系</strong>，如 <code>Dead-岁</code> <code>stairwell-近日</code> 等；</li>
+</ol>
+<h4 id="4-可视化及分析"><a href="#4-可视化及分析" class="headerlink" title="4. 可视化及分析"></a>4. 可视化及分析</h4><p>如果需要可视化对齐结果的话，我们需要两个 pyhton 文件，分别是 align_sym.py 和 align_plot.py，在下面的实验结果连接中可以找到这两个文件（感谢爱心师兄改正的python文件 align_sym.py）。</p>
+<p>首先，根据两个不同方向的单向对齐文件生成对称化文件，运行如下代码即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python align_sym.py en2ch/en2ch.A3.final ch2en/ch2en.A3.final &gt; aligned.grow-diag-final-and</span><br></pre></td></tr></table></figure>
+<p>其次，运行如下文件绘制可视图：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python align_plot.py test_data/en_tok.txt test_data/ch_tok.txt aligned.grow-diag-final-and <span class="string">&quot;example number&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>可视化结果如下所示：</p>
+<ul>
+<li>Example 9：<br><img src="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example9.png?raw=true" alt="9"></li>
+<li>Example 86：<br><img src="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example86.png?raw=true" alt="86"></li>
+<li>Example 126：<br><img src="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example126.png?raw=true" alt="126"></li>
+<li>Example 1511：<br><img src="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example1511.png?raw=true" alt="1511"></li>
+</ul>
+<p>我随机选择了几条数据样本进行可视化，如上图所示，通过观察我发现：</p>
+<ol>
+<li>GIZA++ 不仅正确地<strong>建模了 One-to-One Mapping 的对齐关系</strong>，而且还正确<strong>建模了 One-to-Many Mapping 和 Many-to-One Mapping 的对齐关系</strong>；</li>
+<li>虽然对齐中存在着 Reordering 问题，但是<strong>正确对齐的一大部分都呈现出一条斜对角线</strong>；</li>
+<li>GIZA++ 还<strong>建模了许多错误的对齐关系</strong>；</li>
+<li>和 fast algin 一样，<strong>GIZA++ 也存在着一个词对齐着很多词的现象</strong>，而其中只有几个是正确的对齐。</li>
+</ol>
+<h4 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h4><p>fast algin 的对齐结果直观地看起来是不如 GIZA++ 的，但是 GIZA++ 在小数据集上从搭建到运行出结果所花的时间远远大于 fast align，甚至在大数据集上花费了3天左右的时间。而在这两个对齐工具所展现的对齐结果中，我们都发现了一个单词对齐到很多单词的现象(仅有一个或几个单词是正确的对齐关系，其余皆是错误对齐)。如果我们需要提高对齐的质量以提升模型的性能，那么可以使用 GIZA++；而如果我们的对齐并不是模型提升性能的关键因素，那么或许也可以使用 fast align。关于后续的对齐学习，我将着手去学习 Connectionist Temporal Classification，该技术在 Non-Autoregressive Translation 中十分关键。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/SMT/">SMT</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Alignment/" rel="tag">Alignment</a></li></ul>
+
+            
+      
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/11/24/End-to-End-Non-Autoregressive-Neural-Machine-Translation-with-Connectionist-Temporal-Classification/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">End-to-End Non-Autoregressive Neural Machine Translation with Connectionist Temporal Classification</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">1. 引言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Fast-Align"><span class="nav-number">2.</span> <span class="nav-text">2. Fast Align</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">1. 实验过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%94%99%E8%AF%AF%E8%A7%A3%E5%86%B3"><span class="nav-number">2.2.</span> <span class="nav-text">2. 错误解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-number">2.3.</span> <span class="nav-text">3. 结果分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%89%A7%E8%A1%8C%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-number">2.3.1.</span> <span class="nav-text">1. 执行输出日志分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E5%8F%A5%E5%86%85%E5%AF%B9%E9%BD%90%E5%88%86%E6%9E%90"><span class="nav-number">2.3.2.</span> <span class="nav-text">2. 句内对齐分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E6%89%80%E6%9C%89%E5%AF%B9%E9%BD%90%E5%88%86%E6%9E%90"><span class="nav-number">2.3.3.</span> <span class="nav-text">3. 所有对齐分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-GIZA"><span class="nav-number">3.</span> <span class="nav-text">3. GIZA++</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B-1"><span class="nav-number">3.1.</span> <span class="nav-text">1. 实验过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%94%99%E8%AF%AF%E8%A7%A3%E5%86%B3-1"><span class="nav-number">3.2.</span> <span class="nav-text">2. 错误解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90-1"><span class="nav-number">3.3.</span> <span class="nav-text">3. 结果分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%8F%AF%E8%A7%86%E5%8C%96%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">3.4.</span> <span class="nav-text">4. 可视化及分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%80%BB%E7%BB%93"><span class="nav-number">3.5.</span> <span class="nav-text">4. 总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2021 Sylvanas Forever All Rights Reserved.
+        
+            <span id="busuanzi_container_site_pv">
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

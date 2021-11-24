@@ -110,6 +110,71 @@
         
           <section id="main">
   
+    <article id="post-Align-Tools-Baby-dataset"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2021/11/24/Align-Tools-Baby-dataset/">Align Tools (Baby dataset)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2021/11/24/Align-Tools-Baby-dataset/" class="article-date">
+	  <time datetime="2021-11-24T08:06:58.000Z" itemprop="datePublished">November 24, 2021</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/SMT/">SMT</a>
+ 
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <div class="entry-thumbnail">
+            <a href="/2021/11/24/Align-Tools-Baby-dataset/"><img src="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example86.png?raw=true" class="attachment-thumb-featured size-thumb-featured wp-post-image" alt=""></a>
+          </div>
+          <div class="entry-summary">
+          1. 引言鉴于第一次运行的 fast align 和 Giza++ 是在一个大数据集上进行的，不仅耗时巨大，而且结果多的反而让我眼花缭乱，再加之有一些细节地方并没有得以实现，所以我在一个小数据集上再次进行了实验。而为了能够直观地解释对齐关系，我选用了如下数据集：
+
+数据集：newstest2017 ch-en dataset which contains 2001 examples.
+预处理：因为是直接从实验室找的，所以所有文本已经被 tokenize 过了。
+
+
+        
+          <p class="article-more-link">
+            <a href="/2021/11/24/Align-Tools-Baby-dataset/#more">Continue Reading →</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/SMT/">SMT</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Alignment/" rel="tag">Alignment</a></li></ul>
+
+            
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+  
     <article id="post-End-to-End-Non-Autoregressive-Neural-Machine-Translation-with-Connectionist-Temporal-Classification"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -138,15 +203,18 @@
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Transformer 虽然帮助 NMT 模型摆脱了训练时的顺序执行问题，但是却没有使得其在推理时仍然保持这种并行化优势。非自回归翻译模型 (NAT) 让推理时的每个 token 都能够并行地被生成，但是付出了较大的性能衰减代价。作者提出了<strong>将序列标注问题中的 Connectionist Temporal Classification (CTC) 引入到 NAT 模型中</strong>去，从而在保持推理速度的同时提升其翻译质量。作者在 WMT En-Ro 和 WMT En-De 数据集上进行了实验，结果表明 CTC-based NAT 模型能够获得与其他非自回归模型相当的性能表现。</p>
-<p>首先，作者的模型是基于强大的 Transformer 模型而搭建起来的，并且其编码器部分保持不变。因为无论是 AT 模型的编码器还是 NAT 模型的编码器，它们所承担的职责是完全相同的，所以作者选择将编码器部分保持不变。</p>
-<p>鉴于 NAT 模型的强条件独立性假设，所以作者<strong>将非自回归翻译任务看作为一个序列标注问题</strong>。正如 CTC 的原始论文中所述，机器翻译中的源句和目标句长度往往是不相同的，这一点就和序列标注有所冲突，因此无法直接将序列标注器应用在机器翻译上。为此，作者采用了一种<strong>拉伸输入序列长度的方法，从而可以保证标注器的输入序列长度一定是不小于输出序列长度的</strong>。简言之，作者将编码器输出的每个隐藏状态 $h$ 映射到一个更长的隐藏表示 $W_{spl}\cdot h$，然后再将该表示切分成 $k$ 个隐藏表示，如此便得到了长度为 $k \cdot T_x$ 的隐藏表示序列，如下所示：<br>$$<br>s_{ci+b} = (W_{spl} h_c + b_{spl})_{bd:(b+1)d}<br>$$</p>
-<p>既然作者已经让输入 CTC 解码器的输入序列长度大于等于目标序列的长度了，接下来就是将 CTC 正式引入了。上述增长的隐藏表示序列会被喂给解码器解码，值得注意的是作者<strong>取消了原始 Transformer 解码器自注意力网络中的 mask 机制以鼓励每个 token 的预测都依赖于其双向上下文信息</strong>。最终解码器输出的隐藏状态都会被标注成目标语言的 tokens 或者一个 null 标记，如果被标注上目标语言的 token 则表示该位置上的翻译内容，而如果<strong>被标注上 null 则表示该位置上无内容生成</strong>。由于输入输出之间没有先验的对齐关系，所以作者将所有能产生正确结果的输出序列都考虑进损失函数中。又因为直接对所有组合的指数数量进行求和是不切实际的，于是作者顺水推舟，将 CTC loss 引入模型之中。</p>
-<p><strong>CTC 通过使用动态规划(dynamic programming)算法来计算输出序列的负对数似然，而这个损失可以借助一个类似于训练隐马尔可夫模型的线性算法来计算得到</strong>。CTC 使用动态规划的方法计算出输出序列的所有前后缀的偏对数概率之和，而这些概率会被存储在一个预计算对数概率表格中，于是我们就可以通过结合对应前缀和后缀的对数概率来计算得到正确输出序列的部分概率了。除此之外，<strong>CTC 还为作者带来了束搜索算法，虽然这会让模型的推理时延稍微上升，但是却能够有效地提升模型性能</strong>。因为线性层上的顺序计算还是要比自回归解码快得多，但是束搜索已经被证明能够有效地提升模型翻译体质量了。</p>
-<p>下图为作者所提出的 NAT 模型结构：<br><img src="pics\ctc-nat.png" alt="NAT-CTC" style="zoom:80%;" /></p>
-<p>最终实验结果(如下图)表明，作者所提出的模型在 WMT16 En-Ro 和 WMT14 En-De 数据集上的表现不尽如人意，但是在 WMT15 En-De 数据集上则创造出了 NAT 模型中的 SOTA 成绩。<br><img src="pics\nat-ctc-res.png" alt="Results of NAT-CTC"  /></p>
-<p>本论文感想：由于本文中没有详细介绍 CTC loss 的原理，所以后续还需要看回 CTC 的原始论文！</p>
+        
+          <div class="entry-thumbnail">
+            <a href="/2021/11/24/End-to-End-Non-Autoregressive-Neural-Machine-Translation-with-Connectionist-Temporal-Classification/"><img src="pics/ctc-nat.png" class="attachment-thumb-featured size-thumb-featured wp-post-image" alt=""></a>
+          </div>
+          <div class="entry-summary">
+          Transformer 虽然帮助 NMT 模型摆脱了训练时的顺序执行问题，但是却没有使得其在推理时仍然保持这种并行化优势。非自回归翻译模型 (NAT) 让推理时的每个 token 都能够并行地被生成，但是付出了较大的性能衰减代价。作者提出了将序列标注问题中的 Connectionist Temporal Classification (CTC) 引入到 NAT 模型中去，从而在保持推理速度的同时提升其翻译质量。作者在 WMT En-Ro 和 WMT En-De 数据集上进行了实验，结果表明 CTC-based NAT 模型能够获得与其他非自回归模型相当的性能表现。
 
+        
+          <p class="article-more-link">
+            <a href="/2021/11/24/End-to-End-Non-Autoregressive-Neural-Machine-Translation-with-Connectionist-Temporal-Classification/#more">Continue Reading →</a>
+          </p>
+        </div>
       
     </div>
     <footer class="entry-meta entry-footer">
@@ -334,6 +402,21 @@
 
             
               <div class="widget-entry-thumbnail">
+                <a href="/2021/11/24/Align-Tools-Baby-dataset/" title=""><img width="50" height="50" src="https://github.com/Rexbalaeniceps/Align-Tools/blob/main/alignment_pics/example86.png?raw=true" class="attachment-thumb-small size-thumb-small wp-post-image" alt="preview-16" title=""></a>
+              </div>
+              <div class="widget-entry-summary">
+            
+
+              <h6 style="margin: 0;"><a href="/2021/11/24/Align-Tools-Baby-dataset/">Align Tools (Baby dataset)</a></h6>
+              <span>November 24, 2021</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-thumbnail">
                 <a href="/2021/11/24/End-to-End-Non-Autoregressive-Neural-Machine-Translation-with-Connectionist-Temporal-Classification/" title=""><img width="50" height="50" src="pics/ctc-nat.png" class="attachment-thumb-small size-thumb-small wp-post-image" alt="preview-16" title=""></a>
               </div>
               <div class="widget-entry-summary">
@@ -369,7 +452,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SMT/">SMT</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/SMT/">SMT</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -380,7 +463,7 @@
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
