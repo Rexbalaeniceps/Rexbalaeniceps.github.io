@@ -18,13 +18,13 @@
 <meta property="og:site_name" content="Sylvanas Forever">
 <meta property="og:description" content="Transformer 虽然帮助 NMT 模型摆脱了训练时的顺序执行问题，但是却没有使得其在推理时仍然保持这种并行化优势。非自回归翻译模型 (NAT) 让推理时的每个 token 都能够并行地被生成，但是付出了较大的性能衰减代价。作者提出了将序列标注问题中的 Connectionist Temporal Classification (CTC) 引入到 NAT 模型中去，从而在保持推理速度的同时提">
 <meta property="og:locale">
-<meta property="og:image" content="https://sm.ms/image/MK28vpbV9BOADLd">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ctc-nat.png?raw=true">
 <meta property="article:published_time" content="2021-11-24T06:14:17.000Z">
-<meta property="article:modified_time" content="2021-11-25T07:55:05.387Z">
+<meta property="article:modified_time" content="2021-11-25T08:35:20.049Z">
 <meta property="article:author" content="wbxu">
 <meta property="article:tag" content="NAT">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://sm.ms/image/MK28vpbV9BOADLd">
+<meta name="twitter:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ctc-nat.png?raw=true">
   
     <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
   
@@ -121,8 +121,8 @@
 <div class="article-gallery">
   <div class="article-gallery-photos">
     
-      <a class="article-gallery-img fancybox" target="_blank" href="https://sm.ms/image/MK28vpbV9BOADLd" rel="gallery_ckweo2rsz0003xoothh6xfajj noopener">
-        <img src="https://sm.ms/image/MK28vpbV9BOADLd" itemprop="image">
+      <a class="article-gallery-img fancybox" target="_blank" href="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ctc-nat.png?raw=true" rel="gallery_ckwepazut0006hgot5zr2fxsu noopener">
+        <img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ctc-nat.png?raw=true" itemprop="image">
       </a>
     
   </div>
@@ -164,8 +164,8 @@
 <p>鉴于 NAT 模型的强条件独立性假设，所以作者<strong>将非自回归翻译任务看作为一个序列标注问题</strong>。正如 CTC 的原始论文中所述，机器翻译中的源句和目标句长度往往是不相同的，这一点就和序列标注有所冲突，因此无法直接将序列标注器应用在机器翻译上。为此，作者采用了一种<strong>拉伸输入序列长度的方法，从而可以保证标注器的输入序列长度一定是不小于输出序列长度的</strong>。简言之，作者将编码器输出的每个隐藏状态 $h$ 映射到一个更长的隐藏表示 $W_{spl}\cdot h$，然后再将该表示切分成 $k$ 个隐藏表示，如此便得到了长度为 $k \cdot T_x$ 的隐藏表示序列，如下所示：<br>$$<br>s_{ci+b} = (W_{spl} h_c + b_{spl})_{bd:(b+1)d}<br>$$</p>
 <p>既然作者已经让输入 CTC 解码器的输入序列长度大于等于目标序列的长度了，接下来就是将 CTC 正式引入了。上述增长的隐藏表示序列会被喂给解码器解码，值得注意的是作者<strong>取消了原始 Transformer 解码器自注意力网络中的 mask 机制以鼓励每个 token 的预测都依赖于其双向上下文信息</strong>。最终解码器输出的隐藏状态都会被标注成目标语言的 tokens 或者一个 null 标记，如果被标注上目标语言的 token 则表示该位置上的翻译内容，而如果<strong>被标注上 null 则表示该位置上无内容生成</strong>。由于输入输出之间没有先验的对齐关系，所以作者将所有能产生正确结果的输出序列都考虑进损失函数中。又因为直接对所有组合的指数数量进行求和是不切实际的，于是作者顺水推舟，将 CTC loss 引入模型之中。</p>
 <p><strong>CTC 通过使用动态规划(dynamic programming)算法来计算输出序列的负对数似然，而这个损失可以借助一个类似于训练隐马尔可夫模型的线性算法来计算得到</strong>。CTC 使用动态规划的方法计算出输出序列的所有前后缀的偏对数概率之和，而这些概率会被存储在一个预计算对数概率表格中，于是我们就可以通过结合对应前缀和后缀的对数概率来计算得到正确输出序列的部分概率了。除此之外，<strong>CTC 还为作者带来了束搜索算法，虽然这会让模型的推理时延稍微上升，但是却能够有效地提升模型性能</strong>。因为线性层上的顺序计算还是要比自回归解码快得多，但是束搜索已经被证明能够有效地提升模型翻译体质量了。</p>
-<p>下图为作者所提出的 NAT 模型结构：<br><img src="https://sm.ms/image/MK28vpbV9BOADLd" alt="NAT-CTC" style="zoom:80%;" /></p>
-<p>最终实验结果(如下图)表明，作者所提出的模型在 WMT16 En-Ro 和 WMT14 En-De 数据集上的表现不尽如人意，但是在 WMT15 En-De 数据集上则创造出了 NAT 模型中的 SOTA 成绩。<br><img src="https://sm.ms/image/l4WzcLBOmkRv7JZ" alt="Results of NAT-CTC"  /></p>
+<p>下图为作者所提出的 NAT 模型结构：<br><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ctc-nat.png?raw=true" alt="NAT-CTC" style="zoom:80%;" /></p>
+<p>最终实验结果(如下图)表明，作者所提出的模型在 WMT16 En-Ro 和 WMT14 En-De 数据集上的表现不尽如人意，但是在 WMT15 En-De 数据集上则创造出了 NAT 模型中的 SOTA 成绩。<br><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/nat-ctc-res.png?raw=true" alt="Results of NAT-CTC"  /></p>
 <p>本论文感想：由于本文中没有详细介绍 CTC loss 的原理，所以后续还需要看回 CTC 的原始论文！</p>
 
       
