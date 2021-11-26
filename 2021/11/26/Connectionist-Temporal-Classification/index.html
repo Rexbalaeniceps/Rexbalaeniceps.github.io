@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Connectionist Temporal Classification | Sylvanas Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="CTC" />
+  
+  
+  
+  
+  <meta name="description" content="CTC 的提出就是旨在解决输入和输出之间没有先验对齐的情况。  本文来自Sequence Modeling With CTC，非常好的文章，中文是我自己翻译，如有错误还望赐教！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Connectionist Temporal Classification">
+<meta property="og:url" content="http://example.com/2021/11/26/Connectionist-Temporal-Classification/index.html">
+<meta property="og:site_name" content="Sylvanas Forever">
+<meta property="og:description" content="CTC 的提出就是旨在解决输入和输出之间没有先验对齐的情况。  本文来自Sequence Modeling With CTC，非常好的文章，中文是我自己翻译，如有错误还望赐教！">
+<meta property="og:locale">
+<meta property="og:image" content="https://distill.pub/2017/ctc/assets/speech.svg">
+<meta property="article:published_time" content="2021-11-26T07:21:26.000Z">
+<meta property="article:modified_time" content="2021-11-26T07:24:49.772Z">
+<meta property="article:author" content="wbxu">
+<meta property="article:tag" content="CTC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://distill.pub/2017/ctc/assets/speech.svg">
+  
+    <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css" >
+  <link rel="stylesheet" href="/css/fashion.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+
+
+<header id="allheader" class="site-header" role="banner" 
+   >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="149px" height="200px" alt="Hike News" src=" /Syl.jpg">
+              </a>
+            
+          </h1>
+          
+          
+            <div class="site-description">wbxu&#39;s blog</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="/"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="archives"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="categories"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="tags"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="about"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Connectionist-Temporal-Classification" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" target="_blank" href="https://distill.pub/2017/ctc/assets/speech.svg" rel="gallery_ckwg282x40000poot7pp41txl noopener">
+        <img src="https://distill.pub/2017/ctc/assets/speech.svg" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Connectionist Temporal Classification
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2021/11/26/Connectionist-Temporal-Classification/" class="article-date">
+	  <time datetime="2021-11-26T07:21:26.000Z" itemprop="datePublished">November 26, 2021</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Speech-Recognition/">Speech Recognition</a>
+ 
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CTC 的提出就是旨在解决输入和输出之间没有先验对齐的情况。</p>
+<blockquote>
+<p>本文来自<a target="_blank" rel="noopener" href="https://distill.pub/2017/ctc/">Sequence Modeling With CTC</a>，非常好的文章，中文是我自己翻译，如有错误还望赐教！</p>
+</blockquote>
+<span id="more"></span>
+
+
+
+<p>正式地来说，输入序列 $X = [x_1, x_2, \dots , x_T]$ 和输出序列 $Y = [y_1, y_2, \dots , y_U]$，我希望找到 $X$ 到 $Y$ 之间的映射。而我们所面对的困难有3点：</p>
+<ul>
+<li>$X$ 和 $Y$ 的长度都是可变的；</li>
+<li>$X$ 和 $Y$ 的长度间的比例是可变的；</li>
+<li>我们并没有 $X$ 和 $Y$ 之间的词级先验对齐。</li>
+</ul>
+<p>CTC 算法能够克服上述的几点缺陷。对于给定的输入序列 $X$，CTC 将会为我们提供所有可能 $Y$ 上的一个输出分布。借助这个输出分布，我们可以推理出一个可能的输出 $Y$ 或者评估某个给定输出的概率值。</p>
+<p>对于给定的输入 $X$，我们希望训练我们的模型以最大化正确输出 $Y$ 的概率，而为此我们就需要能够有效的计算条件概率 $p(Y|X)$，不仅如此该条件概率必须是可微的从而能够使用梯度下降(gradient descent)算法来进行优化。</p>
+<p>模型训练结束之后，我们将会使用该模型基于给定的 $X$ 来推理出一个可能的输出 $Y$，如贪婪解码 $\hat{Y} = \underset{Y}{\operatorname {argmax}} p(Y \mid X)$。如果我们使用 CTC 则可以获得一个近似解而不付出太大的代价。</p>
+<h3 id="Alignment"><a href="#Alignment" class="headerlink" title="Alignment"></a>Alignment</h3><p>CTC 算法不需要输入和输出之间的先验对齐，它通过求和所有可能对齐的概率从而计算得到给定输入下一个输出的概率。首先我们举个例子，假设输入序列 $X$ 的长度为 6，而输出序列 $Y = [c, a, t]$，那么一种可能的对齐方式如下 (每个位置都会有一个预测输出，最终通过删除重复还获得 $Y$)，如下图所示：</p>
+<img src="https://distill.pub/2017/ctc/assets/naive_alignment.svg" style="zoom: 200%;" />
+
+<p>这种方法有两个弊端：</p>
+<ul>
+<li>一般，强迫每个输入单词都必须对齐某个输出是没有道理可言的，如翻译中的虚词；</li>
+<li>我们无法产生连续而又正确的输出序列，如 $Y = [h, e, l, l, o]$。</li>
+</ul>
+<p>为了克服上述问题，CTC 引入了一个额外的 token 来表示对应位置上没有任何输出 (或对齐空)，这个 token 称为 <code>blank</code> token，此处用 $\epsilon$ 来表示。于是，CTC 允许任何能够映射到 $Y$ 的对齐，如下：</p>
+<img src="https://distill.pub/2017/ctc/assets/ctc_alignment_steps.svg" style="zoom: 150%;" />
+
+<p>让我们再把目光放回到 cat 的例子上，我们就会发现能够映射到 $Y$ 的对齐映射关系存在着多种，下图举出了一些例子：</p>
+<img src="https://distill.pub/2017/ctc/assets/valid_invalid_alignments.svg" style="zoom: 200%;" />
+
+<p>通过上面的例子，我们可以发现 CTC Alignments 具备几个值得注意的属性：</p>
+<ul>
+<li>$X$ 和 $Y$ 之间可能的对齐关系是单调的，即我们预测下一个方格时，要么就是与之前的方格预测结果相同，要么就是将结果也推进一位；</li>
+<li>$X$ 和 $Y$ 之间的对齐关系是多对一映射(Many-to-One Map)，这也就使得输入序列的长度必须不小于输出序列，即 $\mid X \mid \ge \mid Y \mid$。</li>
+</ul>
+<h3 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h3><p>CTC alignments 为我们提供了一种自然的概率计算方法，如下所示：</p>
+<img src="https://distill.pub/2017/ctc/assets/full_collapse_from_audio.svg" style="zoom: 150%;" />
+
+<p>准确地讲，CTC 对于单个输入输出对 $(X, Y)$ 的目标函数如下：<br>$$<br>\Large p(Y \mid X)\ \ =\ \ \sum_{A \in \mathcal{A}<em>{X, Y}}\ \ \ \prod</em>{t=1}^{T} p_t(a_t \mid X)<br>$$</p>
+<p>其中，$p(Y \mid X)$ 是 CTC 条件概率；$\sum_{A \in \mathcal{A}<em>{X, Y}}$ 是边际化所有合法对齐映射所组成的集合；$\prod</em>{t=1}^{T} p_t(a_t \mid X)$ 是逐个时间步地计算单个对齐映射的概率。我们当然可以直接求和所有合法的对齐映射的概率，但问题在于对齐数量会随着输入序列长度的增加而呈指数式增长，因此这种计算所付出的时间代价太大。万幸的是动态规划能够有效地解决这个问题，其关键在于<strong>如果存在两个对齐在同一个时间步预测出了同样的输出，那么我们就可以将它们合并起来</strong>：</p>
+<p>​                                 <img src="https://distill.pub/2017/ctc/assets/all_alignments.svg" style="zoom: 150%;" /> $\Longrightarrow$ <img src="https://distill.pub/2017/ctc/assets/merged_alignments.svg" style="zoom: 150%;" /></p>
+<p>因为 CTC 在对齐映射中引入了 $\epsilon$，所以我们自然而然地定义序列 $Z = [\epsilon, y_1, \epsilon, y_2, \dots, \epsilon, y_U, \epsilon]$ (即在每个输出 label 之间以及整个序列的首尾都插入一个 $\epsilon$)。接着，我们将 $\alpha_{s, t}$ 表示时间步 $t$ 时的偏序列 $Z_{1:s}$ 的 CTC 得分，那么要使用动态规划算法，就得构造出状态转移方程，具体可分为如下情况：</p>
+<ol>
+<li><strong>预测重复标签</strong></li>
+</ol>
+<img src="https://distill.pub/2017/ctc/assets/cost_no_skip.svg" style="zoom:150%;" />
+
+<p>举上图为例 (显然有 $Z_s = Z_{s-2}$)，我们<strong>不能从 $Z_{1:s-2}^{t-1} = \dots a$ 直接转移到 $Z_{1:s}^{t} = \dots aa$，因为需要被预测出的重复标签 $aa$ 显然会变成单个标签 $a$<strong>。在这种情况下，我们</strong>只能从 $Z_{s}^{t-1}$ 或 $Z_{s-1}^{t-1}$ 转移而来</strong> (如上图的两个实线箭头)；因此有下式：<br>$$<br>\Large \alpha_{s, t} = (\alpha_{s-1, t-1} + \alpha_{s, t-1}) \cdot p_t(z_s \mid X)<br>$$</p>
+<p>其中，$\alpha_{s-1, t-1} + \alpha_{s, t-1}$ 是时刻 $t-1$ 能够转移到正确结果 $Z_s^t$ 的两个合法偏序列的得分和；$p_t(z_s \mid X)$ 则是当前标签 $Z_s$ 在时刻 $t$ 上的概率。</p>
+<ol start="2">
+<li><strong>预测不同标签</strong></li>
+</ol>
+<img src="https://distill.pub/2017/ctc/assets/cost_regular.svg" style="zoom:150%;" />
+
+<p>如上图 (显然有 $Z_s \ne Z_{s-2}$ 且 $Z_{s-1} = \epsilon$)，此时我们<strong>可以从 $Z_{s-2}^{t-1}$ 或 $Z_{s-1}^{t-1}$ 或 $Z_{s}^{t-1}$ 转移而来</strong>，因此有下式：<br>$$<br>\Large \alpha_{s, t} = (\alpha_{s-2, t-1} + \alpha_{s-1, t-1} + \alpha_{s, t-1}) \cdot p_t(z_s \mid X)<br>$$</p>
+<p>其中，$\alpha_{s-2, t-1} + \alpha_{s-1, t-1} + \alpha_{s, t-1}$ 是时刻 $t-1$ 能够转移到正确结果 $Z_s^t$ 的三个合法偏序列的得分和；$p_t(z_s \mid X)$ 则是当前标签 $Z_s$ 在时刻 $t$ 上的概率。</p>
+<p>结合上述的两种情况，假定 $Z = [\epsilon, a, \epsilon, b, \epsilon]$，那么动态规划得到的所有合法对齐映射路径 (一个对齐映射在图中表现为一条从起始节点到终止节点的路径) 如下图所示：</p>
+<img src="https://distill.pub/2017/ctc/assets/ctc_cost.svg" style="zoom:150%;" />
+
+<p>从上图中不难发现，起始节点有两个 ($\epsilon$ 或 $a$)，而终止节点亦有两个 ($b$ 或 $\epsilon$)，那么整个所有可能对齐映射的概率和就只需要将两个终止节点 ($b$ 或 $\epsilon$) 的得分 $\alpha$ 相加即可，即：<br>$$<br>\Large p(Y \mid X) = \alpha_{2U, T} + \alpha_{2U+1, T}<br>$$</p>
+<p>因为每一步的动态规划都只涉及到乘法和加法，所以我们的损失函数是可微的，进一步来说模型可以通过梯度反向传播算法来训练。当然了，最大化条件概率也就可以说成最小化负的条件概率，因此我们的目标函数 (最小化负对数似然) 如下：<br>$$<br>\large \sum_{(X,Y) \in \mathcal{D}} - log p(Y \mid X)<br>$$</p>
+<h3 id="Inference"><a href="#Inference" class="headerlink" title="Inference"></a>Inference</h3><p>当我们训练完模型之后，我们就得拿它来推理结果了，这是就需要解决如下问题：<br>$$<br>\Large Y^{*} = \underset{Y} {\operatorname {argmax}} p(Y \mid X)<br>$$</p>
+<ol>
+<li><strong>最佳路径解码</strong></li>
+</ol>
+<p>采用贪心策略，每个时间步上都选择概率最高的单词作为输出以期使得整个对齐映射概率最高，如下：<br>$$<br>\Large A^{*} = \underset{A} {\operatorname {argmax}} \prod_{t=1}^{T} p_t(a_t \mid X)<br>$$</p>
+<p>然后通过 collapse function 就可以根据得到的 $A^{*}$ 来获得输出序列 $Y$。这种贪心策略实际上能够应用且有效的场景少之甚少，它并不能保证我们所获得的 $Y$ 一定是最优的 $Y$。更进一步来说，它完全没有考虑到一个 $Y$ 可能对应着多个 $A$ 这个事实。</p>
+<p>举个例子，$p(A_1 = [a, a, a] \mid X) = 0.32$、$p(A_2 = [a, a, \epsilon] \mid X) = 0.18$ 以及 $p(A_3 = [\epsilon, b, \epsilon] \mid X) = 0.42$，那么就要有 $Y = [b]$，因为对齐 $A_3$ 是概率最高的那个。但是我们要知道 $[a, a, a] \Rightarrow [a]$ 且 $[a, a, \epsilon] \Rightarrow [a]$，所以 $p(Y = [a] \mid X) = 0.32 + 0.18 = 0.5$，故 $Y = [a]$ 才更有可能是正确输出结果。</p>
+<ol start="2">
+<li><strong>前缀搜索解码</strong></li>
+</ol>
+<p>该算法可以是作为束搜索(beam search)的变体，那么我们首先来看一下标准的束搜索是如何运作的，如下图(束大小为3)：</p>
+<img src="https://distill.pub/2017/ctc/assets/beam_search.svg" style="zoom:150%;" />
+
+<p>我们为什么不能使用标准的束搜索呢，正是因为我们的偏序列中存在着重复和 $\epsilon$ tokens，因此到头来可能计算的只是同一个输出 $Y$ 的不同对齐映射罢了。正是因为如此，我们在每个时间步中都执行 collapse function 来将偏对齐转换成偏输出，这里称之为对应输出的前缀(prefix)，于是我们的“束”不再是“对齐束”而是“前缀束”。具体如下图所示：</p>
+<img src="https://distill.pub/2017/ctc/assets/prefix_beam_search.svg" style="zoom:150%;" />
+
+<p>从上图详细的流程中我们不难发现如下规律：</p>
+<ul>
+<li>当前缀中的最后一个标签与当前标签不同时，我们只需要将正在处理的节点得分并入到前缀得分中去；</li>
+<li>当前缀中的最后一个标签与当前标签相同时，我们需要将当前处理节点以及其上面的 $\epsilon$ 节点一起并入前缀得分中去；</li>
+<li>某一个得到前缀并不一定就只能从一个之前的前缀得到，有可能有多条路径都能构成该前缀。</li>
+</ul>
+<img src="https://distill.pub/2017/ctc/assets/prefix_beam_search_single.svg" style="zoom:150%;" />
+
+<p>注：<a target="_blank" rel="noopener" href="https://gist.github.com/awni/56369a90d03953e370f3964c826ed4b0">CTC 计算的一种实现方法</a></p>
+<p>像是在语音识别领，整个模型还会涉及一个语言模型来提升准确率，为此，我们可以将语言模型视作推理中的一个项：<br>$$<br>\Large Y^{*} = \underset{Y} {\operatorname {argmax}} p(Y \mid X) \cdot p(Y)^\alpha \cdot L(Y)^\beta<br>$$</p>
+<p>其中，$L(Y)$ 会计算目标序列 $Y$ 的长度并充当一个词插入红利(word insertion bonus)。语言模型则只会在前缀被扩展时被包括在内，也容易理解，毕竟一个不变的东西再去算一次属实浪费时间了。如若这般，就很容易导致搜索更偏向于较短的前缀，此时上述的词插入红利将会帮助我们减缓这个问题。一般来说，参数 $\alpha$ 和 $\beta$ 会通过交叉验证(cross-validation)来设定。</p>
+<h3 id="CTC-Properties"><a href="#CTC-Properties" class="headerlink" title="CTC Properties"></a>CTC Properties</h3><h4 id="Conditional-Independence"><a href="#Conditional-Independence" class="headerlink" title="Conditional Independence"></a>Conditional Independence</h4><p>它广为人诟病的缺陷就是<strong>条件独立性假设</strong>，<strong>但这一点与非自回归翻译模型却不谋而合</strong>。即，模型假设：<strong>对于给定的输入，每一个输出都条件独立于其他输出</strong>，自不必说，这是一个bad假设，尤其对于 Seq2Seq 问题来说。</p>
+<img src="https://distill.pub/2017/ctc/assets/conditional_independence.svg" style="zoom: 150%;" />
+
+<p>例如，给定一个语音输入，其预测的输出序列可以是 $Y = tripple\ \ A$ 或 $Y = AAA$。那么，当第一个字符输出为 $A$ 时，下一个字符为 $A$ 的可能性应该因此而提升；当第一个字符输出为 $t$ 时，下一个字符为 $i$ 的概率就应该因此而升高。但是条件独立性假设移除了这种前后向的依赖关系，从而导致上述行为无法发生。</p>
+<p>因此，使用 CTC 的模型性能都不高，因为它很难学习到一个像样的语言模型。但条件独立性假设并非全是坏处，它有助于学习到的语言知识能够快速迁移至其他领域。</p>
+<h4 id="Alignment-Properties"><a href="#Alignment-Properties" class="headerlink" title="Alignment Properties"></a>Alignment Properties</h4><p>CTC 算法是无需先验对齐的，它的目标函数会边际化所有可能的对齐。尽管 CTC 对 $X$ 和 $Y$ 之间的对齐映射的排列形式做了强假设，但是它们之间的<strong>分布概率对于模型是不可知的</strong>。有些任务上，CTC 会给单个对齐排列分配绝大部分的概率，这是不合理的。</p>
+<p>正如之前所说的，<strong>CTC 的对齐是单调的</strong>，这对于语音识别而言是行之有效的，但是对于机器翻译而言是不合理的 (因为一个当前翻译单词很可能就对齐到了源句中相对位置在其之前好几个单词位置的单词)。</p>
+<p>CTC 对齐的另一特点就是它们是多对一的对齐关系，且<strong>必定是 Many-to-One Map 的对齐</strong>。这种映射关系对于一些情况是合理的，但显然对于所有情况一概视之是不合理的。简言之，CTC 不允许一对多映射关系的存在是不合理的。</p>
+<p>从上述多对一映射，我们又引出令一问题：<strong>输入序列长度一定要大于等于输出序列长度</strong>。这会导致其难以处理输入序列长度小于输出序列长度的样本，而这在机器翻译中并非鲜有。即使是通过某种方法拉伸输入序列长度，那么长度预测又成为一个新问题，当长度预测过长时，冗余的计算量又成为一个问题。</p>
+<h3 id="CTC-Context"><a href="#CTC-Context" class="headerlink" title="CTC Context"></a>CTC Context</h3><h4 id="HMMs"><a href="#HMMs" class="headerlink" title="HMMs"></a>HMMs</h4><p>CTC 其实和 HMM 十分相似，接下来我们就来分析一下。假设输入序列 $X$ 其长度为 $T$、输出序列 $Y$ 其长度为 $U$，一种学习 $p(Y \mid X)$ 的策略就是应用贝叶斯法则：<br>$$<br>\Large p(Y \mid X) \propto p(X \mid Y) \cdot p(Y)<br>$$</p>
+<p>其中，$p(Y)$ 是任意的某个语言模型，我们需要关注的是 $p(X \mid Y)$。如上所述，我们依旧让 $\mathcal{A}$ 表示 $X$ 和 $Y$ 之间所有合法对齐排列的集合，然后我们边缘化这些对齐则有：<br>$$<br>\Large p(X \mid Y) = \sum_{A \in \mathcal{A}} p(X, A \mid Y)<br>$$</p>
+<p>我们在这儿定义两个假设：(1). 给定前一个状态 $a_{t-1}$，状态 $a_t$ 条件独立于所有历史状态；(2). 给定当前状态 $a_t$，观察结果 $x_t$ 完全条件独立，(如下图所示) 于是我们有如下的标准隐马尔科夫模型：<br>$$<br>\Large p(X) = \sum_{A \in \mathcal{A}} \prod_{t=1}^{T}\ \ \ p(x_t \mid a_t) \cdot p(a_t \mid a_{t-1})<br>$$</p>
+<p>其中，$\sum_{A \in \mathcal{A}} \prod_{t=1}^{T}$ 表示边际化所有可能的对齐映射；$p(x_t \mid a_t)$ 是输出概率(emission probability)；$p(a_t \mid a_{t-1})$ 则是翻译概率(translation probability)。</p>
+<img src="https://distill.pub/2017/ctc/assets/hmm.svg" style="zoom:150%;" />
+
+<p>接下来，我们首先假设<strong>翻译概率 $p(a_t \mid a_{t-1})$ 是均匀分布</strong>，那么就有：<br>$$<br>\Large p(X) \propto \sum_{A \in \mathcal{A}} \prod_{t=1}^{T}\ \ \ p(x_t \mid a_t)<br>$$</p>
+<p>比较两式，我们不难发现如下两点不同：</p>
+<ul>
+<li>一个是给定 $X$ 去学习 $Y$，另一个则是给定 $Y$ 去学习 $X$；</li>
+<li>集合 $\mathcal{A}$ 的生成方法。</li>
+</ul>
+<p>我们应用贝叶斯公式并重写模型：<br>$$<br>\Large \begin{aligned}<br>p(X) &amp; \propto \sum_{A \in \mathcal{A}} \prod_{t=1}^{T}\ \ \ p(x_t \mid a_t) \<br>&amp; \propto \sum_{A \in \mathcal{A}} \prod_{t=1}^{T}\ \ \ \frac{p(a_t \mid x_t) \cdot p(x_t)}{p(a_t)} \<br>&amp; \propto \sum_{A \in \mathcal{A}} \prod_{t=1}^{T}\ \ \ \frac{p(a_t \mid x_t)}{p(a_t)}<br>\end{aligned}<br>$$</p>
+<p>此时，我们为状态 $a$ 假设一个先验的均匀分布并使其基于输入序列 $X$ 而不是单个时刻的 $x_t$，则有：<br>$$<br>\Large p(X) \propto \sum_{A \in \mathcal{A}} \prod_{t=1}^{T}\ \ \ p(a_t \mid X)<br>$$</p>
+<p>如果假设 $\mathcal{A}$ 是一样的，那么上述式子实质上就是 CTC loss 函数；而实际上 HMM 框架并不会指定 $\mathcal{A}$ 应该包含什么，它可由具体任务具体分析得到。在许多情况下，模型并不依赖于 $Y$ 并且 $\mathcal{A}$ 包含了所有长度为 $T$ 的可能输出序列，此时 HMM 可以被表示为如下的遍历图：</p>
+<img src="https://distill.pub/2017/ctc/assets/ergodic_hmm.svg" style="zoom:150%;" />
+
+<p>而在我们的这个例子中，模型的转移与 $Y$ 是密切相关的，我们可以通过一个简单的线性状态转移图来表示之：</p>
+<img src="https://distill.pub/2017/ctc/assets/linear_hmm.svg" style="zoom:150%;" />
+
+<p>CTC 通过 $\epsilon$ 来增强输出词典，HMM 则允许一个从左至右的转移子集，而 CTC HMM 就会有两个开始状态和两个接受状态。虽然对于每个独立的 $Y$，状态图都是不同的，但是估计观察和转移概率的函数是共享的。CTC 模型能够给出可能对齐的集合从而为一些问题提供好的先验知识。并且 CTC 是辨别的，它直接建模 $p(Y \mid X)$，而辨别训练能够让我们使用更强大的学习算法。</p>
+<img src="https://distill.pub/2017/ctc/assets/ctc_hmm.svg" style="zoom:150%;" />
+
+<h4 id="Enc-Dec-Models"><a href="#Enc-Dec-Models" class="headerlink" title="Enc-Dec Models"></a>Enc-Dec Models</h4><p>编码器-解码器是用于序列建模的神经网络通用框架，其中编码器编码输入序列 $X$，而解码器则输出目标序列上的一个分布，我们可以表示成如下式子：<br>$$<br>\Large p(Y \mid X) = Decoder(Encoder(X))<br>$$</p>
+<ol>
+<li>Encoder</li>
+</ol>
+<p>CTC 模型的编码器和我们所见过的 Enc-Dec 架构中的编码器并无二样，但其有一个特殊的约束：输入序列长度大于目标序列长度。</p>
+<ol start="2">
+<li>Decoder</li>
+</ol>
+<p>CTC 模型的解码器可以视作一个简单的线性变换再加上一个 Softmax 激活函数。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Speech-Recognition/">Speech Recognition</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTC/" rel="tag">CTC</a></li></ul>
+
+            
+      
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/11/25/Multi-Task-Learning-with-Shared-Encoder-for-Non-Autoregressive-Machine-Translation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Multi-Task Learning with Shared Encoder for Non-Autoregressive Machine Translation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Alignment"><span class="nav-number">1.</span> <span class="nav-text">Alignment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Loss-Function"><span class="nav-number">2.</span> <span class="nav-text">Loss Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inference"><span class="nav-number">3.</span> <span class="nav-text">Inference</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CTC-Properties"><span class="nav-number">4.</span> <span class="nav-text">CTC Properties</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Conditional-Independence"><span class="nav-number">4.1.</span> <span class="nav-text">Conditional Independence</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Alignment-Properties"><span class="nav-number">4.2.</span> <span class="nav-text">Alignment Properties</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CTC-Context"><span class="nav-number">5.</span> <span class="nav-text">CTC Context</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HMMs"><span class="nav-number">5.1.</span> <span class="nav-text">HMMs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Enc-Dec-Models"><span class="nav-number">5.2.</span> <span class="nav-text">Enc-Dec Models</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2021 Sylvanas Forever All Rights Reserved.
+        
+            <span id="busuanzi_container_site_pv">
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
