@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>DSLP | Sylvanas Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="NAT" />
+  
+  
+  
+  
+  <meta name="description" content="之前拜读了 “Non-Autoregressive Translation with Layer-Wise Prediction and Deep Supervision” 这篇论文，最近发现它开源了代码，因此进行了如下实践。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DSLP">
+<meta property="og:url" content="http://example.com/2021/11/27/DSLP/index.html">
+<meta property="og:site_name" content="Sylvanas Forever">
+<meta property="og:description" content="之前拜读了 “Non-Autoregressive Translation with Layer-Wise Prediction and Deep Supervision” 这篇论文，最近发现它开源了代码，因此进行了如下实践。">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/chenyangh/DSLP/blob/main/docs/efficiency.png">
+<meta property="article:published_time" content="2021-11-27T12:14:39.000Z">
+<meta property="article:modified_time" content="2021-11-27T12:50:17.902Z">
+<meta property="article:author" content="wbxu">
+<meta property="article:tag" content="NAT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/chenyangh/DSLP/blob/main/docs/efficiency.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css" >
+  <link rel="stylesheet" href="/css/fashion.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+
+
+<header id="allheader" class="site-header" role="banner" 
+   >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="149px" height="200px" alt="Hike News" src=" /Syl.jpg">
+              </a>
+            
+          </h1>
+          
+          
+            <div class="site-description">wbxu&#39;s blog</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="/"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="archives"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="categories"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="tags"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="about"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-DSLP" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" target="_blank" href="https://github.com/chenyangh/DSLP/blob/main/docs/efficiency.png" rel="gallery_ckwhtadn40000vkotcyuh3vmu noopener">
+        <img src="https://github.com/chenyangh/DSLP/blob/main/docs/efficiency.png" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      DSLP
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2021/11/27/DSLP/" class="article-date">
+	  <time datetime="2021-11-27T12:14:39.000Z" itemprop="datePublished">November 27, 2021</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a>
+ 
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前拜读了 “Non-Autoregressive Translation with Layer-Wise Prediction and Deep Supervision” 这篇论文，最近发现它开源了代码，因此进行了如下实践。</p>
+<span id="more"></span>
+
+<h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><ul>
+<li>可以直接在 <a target="_blank" rel="noopener" href="https://github.com/chenyangh/DSLP">DSLP</a> 仓库打包下载</li>
+<li>也可以使用 <code>wget</code> 下载</li>
+</ul>
+<h4 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h4><p>首先，进入 DSLP 文件目录下，然后依次执行如下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pip install -e .</span><br><span class="line">pip install tensorflow tensorboard sacremoses nltk Ninja omegaconf</span><br><span class="line">pip install <span class="string">&#x27;fuzzywuzzy[speedup]&#x27;</span></span><br><span class="line">pip install hydra-core==1.0.6</span><br><span class="line">pip install sacrebleu==1.5.1</span><br><span class="line">pip install git+https://github.com/dugu9sword/lunanlp.git</span><br></pre></td></tr></table></figure>
+
+<p>然后，就需要配置 <code>ctcdecode</code> 了，如果条件允许的话，直接运行如下代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive https://github.com/parlance/ctcdecode.git</span><br><span class="line"><span class="built_in">cd</span> ctcdecode &amp;&amp; pip install .</span><br></pre></td></tr></table></figure>
+
+<p>如果你出现如下问题，那么就算网再好，也不可能安装好的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;setup.py&quot;</span>, line <span class="number">26</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    download_extract(</span><br><span class="line">  File <span class="string">&quot;setup.py&quot;</span>, line <span class="number">16</span>, <span class="keyword">in</span> download_extract</span><br><span class="line">    urllib.request.urlretrieve(url, dl_path)</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/urllib/request.py&quot;</span>, line <span class="number">247</span>, <span class="keyword">in</span> urlretrieve</span><br><span class="line">    <span class="keyword">with</span> contextlib.closing(urlopen(url, data)) <span class="keyword">as</span> fp:</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/urllib/request.py&quot;</span>, line <span class="number">222</span>, <span class="keyword">in</span> urlopen</span><br><span class="line">    <span class="keyword">return</span> opener.<span class="built_in">open</span>(url, data, timeout)</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/urllib/request.py&quot;</span>, line <span class="number">525</span>, <span class="keyword">in</span> <span class="built_in">open</span></span><br><span class="line">    response = self._<span class="built_in">open</span>(req, data)</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/urllib/request.py&quot;</span>, line <span class="number">542</span>, <span class="keyword">in</span> _<span class="built_in">open</span></span><br><span class="line">    result = self._call_chain(self.handle_open, protocol, protocol +</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/urllib/request.py&quot;</span>, line <span class="number">502</span>, <span class="keyword">in</span> _call_chain</span><br><span class="line">    result = func(*args)</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/urllib/request.py&quot;</span>, line <span class="number">1397</span>, <span class="keyword">in</span> https_open</span><br><span class="line">    <span class="keyword">return</span> self.do_open(http.client.HTTPSConnection, req,</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/urllib/request.py&quot;</span>, line <span class="number">1358</span>, <span class="keyword">in</span> do_open</span><br><span class="line">    r = h.getresponse()</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/http/client.py&quot;</span>, line <span class="number">1348</span>, <span class="keyword">in</span> getresponse</span><br><span class="line">    response.begin()</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/http/client.py&quot;</span>, line <span class="number">316</span>, <span class="keyword">in</span> begin</span><br><span class="line">    version, status, reason = self._read_status()</span><br><span class="line">  File <span class="string">&quot;/home/wbxu/anaconda3/envs/dslp/lib/python3.8/http/client.py&quot;</span>, line <span class="number">285</span>, <span class="keyword">in</span> _read_status</span><br><span class="line">    <span class="keyword">raise</span> RemoteDisconnected(<span class="string">&quot;Remote end closed connection without&quot;</span></span><br><span class="line">http.client.RemoteDisconnected: Remote end closed connection without response</span><br></pre></td></tr></table></figure>
+
+<p>请按照如下步骤进行： </p>
+<ol>
+<li><p>打开 <a target="_blank" rel="noopener" href="https://colab.research.google.com/">google colab</a> 并创建一个新的 notebook，运行如下代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive https://github.com/parlance/ctcdecode.git</span><br><span class="line"><span class="built_in">cd</span> ctcdecode &amp;&amp; pip install .</span><br></pre></td></tr></table></figure></li>
+<li><p>然后按照它输出的提示信息，找到如下一个目录和两个文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ctcdecode/</span><br><span class="line">~/third_party/openfst-1.6.7.tar.gz</span><br><span class="line">~/third_party/boost_1_67_0.tar.gz</span><br></pre></td></tr></table></figure></li>
+<li><p>将这两个文件添加到 <code>ctcdecode/third_party</code> 目录下，然后下载整个 <code>ctcdecode</code> 目录：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ThreadPool	kenlm	utf8	openfst-1.6.7.tar.gz	boost_1_67_0.tar.gz</span><br></pre></td></tr></table></figure></li>
+<li><p>将 <code>ctcdecode</code> 上传至 <code>DSLP</code> 目录下，运行如下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ctcdecode</span><br><span class="line">pip install .</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h4><p>fairseq 提供了蒸馏数据集，我们直接<a target="_blank" rel="noopener" href="http://dl.fbaipublicfiles.com/nat/distill_dataset.zip">下载</a>即可</p>
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><ol>
+<li><p>Preprocess</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TEXT=wmt14_ende_distill</span><br><span class="line">python3 fairseq_cli/preprocess.py </span><br><span class="line">	--source-lang en --target-lang de \</span><br><span class="line">	--trainpref <span class="variable">$TEXT</span>/train.en-de \</span><br><span class="line">	--validpref <span class="variable">$TEXT</span>/valid.en-de \</span><br><span class="line">	--testpref <span class="variable">$TEXT</span>/test.en-de \</span><br><span class="line">	--destdir data-bin/wmt14.en-de_kd \</span><br><span class="line">	--workers 40 \</span><br><span class="line">	--joined-dictionary</span><br></pre></td></tr></table></figure></li>
+<li><p>Run</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">python3 train.py data-bin/wmt14.en-de_kd </span><br><span class="line">	--source-lang en --target-lang de \</span><br><span class="line">	--save-dir checkpoints  --eval-tokenized-bleu \</span><br><span class="line">	--keep-interval-updates 5 --save-interval-updates 500 \</span><br><span class="line">	--validate-interval-updates 500 \</span><br><span class="line">	--maximize-best-checkpoint-metric \</span><br><span class="line">	--eval-bleu-remove-bpe \</span><br><span class="line">	--eval-bleu-print-samples \</span><br><span class="line">	--best-checkpoint-metric bleu \</span><br><span class="line">	--log-format simple \</span><br><span class="line">	--log-interval 100 \</span><br><span class="line">	--eval-bleu \</span><br><span class="line">	--eval-bleu-detok space \</span><br><span class="line">	--keep-last-epochs 5 \</span><br><span class="line">	--keep-best-checkpoints 5  \</span><br><span class="line">	--fixed-validation-seed 7 \</span><br><span class="line">	--ddp-backend=no_c10d \</span><br><span class="line">	--share-all-embeddings \</span><br><span class="line">	--decoder-learned-pos \</span><br><span class="line">	--encoder-learned-pos  \</span><br><span class="line">	--optimizer adam \</span><br><span class="line">	--adam-betas <span class="string">&quot;(0.9,0.98)&quot;</span> \</span><br><span class="line">	--lr 0.0005 \ </span><br><span class="line">	--lr-scheduler inverse_sqrt \</span><br><span class="line">	--stop-min-lr 1e-09 \</span><br><span class="line">	--warmup-updates 10000 \</span><br><span class="line">	--warmup-init-lr 1e-07 \</span><br><span class="line">	--apply-bert-init \</span><br><span class="line">	--weight-decay 0.01 \</span><br><span class="line">	--fp16 \</span><br><span class="line">	--clip-norm 2.0 \</span><br><span class="line">	--max-update 300000  \</span><br><span class="line">	--task translation_glat \</span><br><span class="line">	--criterion glat_loss \</span><br><span class="line">	--arch glat_sd \</span><br><span class="line">	--noise full_mask \</span><br><span class="line">	--concat-yhat \</span><br><span class="line">	--concat-dropout 0.0 \</span><br><span class="line">	--label-smoothing 0.1 \ </span><br><span class="line">	--activation-fn gelu \</span><br><span class="line">	--dropout 0.1  \</span><br><span class="line">	--max-tokens 8192 \</span><br><span class="line">	--glat-mode glat \ </span><br><span class="line">	--length-loss-factor 0.1 \</span><br><span class="line">	--pred-length-offset </span><br></pre></td></tr></table></figure></li>
+<li><p>Evaluation</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">fairseq-generate data-bin/wmt14.en-de_kd  </span><br><span class="line">	--path checkpoints \</span><br><span class="line">	--gen-subset <span class="built_in">test</span> \</span><br><span class="line">	--task translation_lev \</span><br><span class="line">	--iter-decode-max-iter 0 \</span><br><span class="line">    --iter-decode-eos-penalty 0 \</span><br><span class="line">    --beam 1 \</span><br><span class="line">    --remove-bpe \</span><br><span class="line">    --print-step \</span><br><span class="line">    --batch-size 100</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NAT/" rel="tag">NAT</a></li></ul>
+
+            
+      
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/11/26/Connectionist-Temporal-Classification/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Connectionist Temporal Classification</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-number">1.1.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE"><span class="nav-number">1.3.</span> <span class="nav-text">数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C"><span class="nav-number">1.4.</span> <span class="nav-text">运行</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2021 Sylvanas Forever All Rights Reserved.
+        
+            <span id="busuanzi_container_site_pv">
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
