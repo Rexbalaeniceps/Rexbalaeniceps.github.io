@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Rejuvenating Low-Frequency Words: Making the Most of Parallel Data in Non-Autoregressive Translation | Sylvanas Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="NAT" />
+  
+  
+  
+  
+  <meta name="description" content="虽然，数据蒸馏(Knowledge Distillation)被广泛地用于构造合成数据来训练 NAT 模型，但是蒸馏数据集和原始数据集在低频词上存在着不一致，进而导致了 NAT 模型预测低频词时会出现更多的错误。 换言之，知识蒸馏可能会丢失原始数据中的某种重要信息，从而导致了预测低频词时出现更多错误。针对此，Ding 等人提出的方法严重依赖于外部资源和人工先验知识，这就限制了其应用的范围。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rejuvenating Low-Frequency Words: Making the Most of Parallel Data in Non-Autoregressive Translation">
+<meta property="og:url" content="http://example.com/2021/12/05/Rejuvenating-Low-Frequency-Words-Making-the-Most-of-Parallel-Data-in-Non-Autoregressive-Translation/index.html">
+<meta property="og:site_name" content="Sylvanas Forever">
+<meta property="og:description" content="虽然，数据蒸馏(Knowledge Distillation)被广泛地用于构造合成数据来训练 NAT 模型，但是蒸馏数据集和原始数据集在低频词上存在着不一致，进而导致了 NAT 模型预测低频词时会出现更多的错误。 换言之，知识蒸馏可能会丢失原始数据中的某种重要信息，从而导致了预测低频词时出现更多错误。针对此，Ding 等人提出的方法严重依赖于外部资源和人工先验知识，这就限制了其应用的范围。">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/LFR_1.png?raw=true">
+<meta property="article:published_time" content="2021-12-05T06:13:23.000Z">
+<meta property="article:modified_time" content="2021-12-05T06:14:44.980Z">
+<meta property="article:author" content="wbxu">
+<meta property="article:tag" content="NAT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/LFR_1.png?raw=true">
+  
+    <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css" >
+  <link rel="stylesheet" href="/css/fashion.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+
+
+<header id="allheader" class="site-header" role="banner" 
+   >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="149px" height="200px" alt="Hike News" src=" /Syl.jpg">
+              </a>
+            
+          </h1>
+          
+          
+            <div class="site-description">wbxu&#39;s blog</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="/"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="archives"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="categories"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="tags"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="about"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Rejuvenating-Low-Frequency-Words-Making-the-Most-of-Parallel-Data-in-Non-Autoregressive-Translation" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" target="_blank" href="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/LFR_1.png?raw=true" rel="gallery_ckwsuodcc0000tkotelwcc1h9 noopener">
+        <img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/LFR_1.png?raw=true" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Rejuvenating Low-Frequency Words: Making the Most of Parallel Data in Non-Autoregressive Translation
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2021/12/05/Rejuvenating-Low-Frequency-Words-Making-the-Most-of-Parallel-Data-in-Non-Autoregressive-Translation/" class="article-date">
+	  <time datetime="2021-12-05T06:13:23.000Z" itemprop="datePublished">December 5, 2021</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a>
+ 
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>虽然，数据蒸馏(Knowledge Distillation)被广泛地用于构造合成数据来训练 NAT 模型，但是蒸馏数据集和原始数据集在低频词上存在着不一致，进而导致了 NAT 模型预测低频词时会出现更多的错误。 换言之，<strong>知识蒸馏可能会丢失原始数据中的某种重要信息，从而导致了预测低频词时出现更多错误</strong>。针对此，Ding 等人提出的方法严重依赖于外部资源和人工先验知识，这就限制了其应用的范围。</p>
+<span id="more"></span>
+
+<p>作者<strong>利用预训练将原始数据直接暴露给 NAT 模型而不需要大量修改模型体系结构</strong>。此外，作者还根据两个对齐方向来分析蒸馏数据中的双向连接(对齐关系)，进而<strong>发现知识蒸馏使得源低频词词更确定地对齐到目标词，而目标低频词则难以对齐源端词语</strong>。作者将其归结于知识蒸馏所造成的信息缺失，并基于上述问题提出了<strong>逆知识蒸馏(reverse KD)来召回目标低频词的对齐</strong>，之后又<strong>将两种蒸馏数据拼接起来以同时让模型拥有确定性知识和低频词信息</strong>。为了充分利用原始数据和合成数据，作者最终<strong>将原始预训练、双语蒸馏训练、知识蒸馏微调这三个互补的方法结合起来以进一步提升 NAT 模型的性能表现</strong>。</p>
+<h4 id="Pretraining-with-Raw-Data"><a href="#Pretraining-with-Raw-Data" class="headerlink" title="Pretraining with Raw Data"></a>Pretraining with Raw Data</h4><ul>
+<li>$\overrightarrow{KD}$ 能够减少训练数据上的模式从而减低内在不确定性和学习难度，这就使得 NAT 模型学习起来更加简单；</li>
+<li>$\overrightarrow{KD}$ 加剧了训练数据中高频词和低频词间的不平衡并且还会导致某种重要信息的缺失。Ding 等人也揭示了 $\overrightarrow{KD}$ 的副作用：蒸馏数据集引起了 NAT 模型在低频词上的词汇选择错误。</li>
+</ul>
+<p>预训练可以迁移知识和数据分布从而提升模型的鲁棒性，作者希望能够将损失信息的分布(低频词)迁移到翻译模型中去，因此提出了如下的预训练方法：</p>
+<ol>
+<li><strong>raw data + pretraining</strong></li>
+</ol>
+<p>在原始数据集上预训练 NAT 模型，这是因为<strong>原始数据能够保持数据的原始分布，尤其是针对那些低频词</strong>。尽管对于 NAT 来说是困难的，但是<strong>模型通过预训练能够获得真实数据的通用知识，这或许将有助于模型更好更快地去学习后续任务</strong>。作者选择在模型获得了原始数据最佳 BLEU 得分的 90% 时就早停预训练。</p>
+<ol start="2">
+<li><strong>distill data + continuous training</strong></li>
+</ol>
+<p>在蒸馏数据集上持续训练 NAT 模型，这是为了<strong>保持低模(low-modes)的优势</strong>。</p>
+<h4 id="Bidirectional-Distillation-Training"><a href="#Bidirectional-Distillation-Training" class="headerlink" title="Bidirectional Distillation Training"></a>Bidirectional Distillation Training</h4><p><strong>$\overrightarrow{KD}$ 通过将高频词代替低频词简化了训练数据，这虽然促成了更简单的源端到目标端对齐，从而导致了双语覆盖率高</strong>。但作者认为 <strong>$\overrightarrow{KD}$ 使得目标低频词没什么机会去对齐到源单词</strong>。为了验证上述想法，他们提出了一个定量分析双向双语连接的方法。</p>
+<p>实验结果表明：1. 在 source 到 target 方向上，$\overrightarrow{KD}$ 数据召回了更多 LFW 对齐关系，并且其对齐准确率较高。因此<strong>从双语对齐来看，$\overrightarrow{KD}$ 对于 NAT 模型是有效的</strong>。2. 在 target 到 source 方向上，$\overrightarrow{KD}$ 数据召回了更少的 LFW 对齐关系，而且对齐准确率较低。因此 <strong>$\overrightarrow{KD}$ 会因目标低频词的缺失而损害 NAT 模型</strong>。</p>
+<p>基于上述的实验结果，使用逆知识蒸馏是一个自然而然的想法；因此，作者提出在双语蒸馏数据集(将两种不同方向的蒸馏数据集拼接起来)上训练 NAT 模型。</p>
+<ol>
+<li><strong>Knowledge Distillation $\overrightarrow{KD}$</strong></li>
+</ol>
+<p>同之前的方法一样，将 AT 模型翻译的目标句作为 ground true。</p>
+<ol start="2">
+<li><strong>Reverse Knowledge Distillation $\overrightarrow{KD}$</strong></li>
+</ol>
+<p>使用一个反向 AT 教师模型来根据目标句子翻译出源句，并将其取代原始的源句。</p>
+<p>具体流程如下：</p>
+<ol>
+<li>同时用两个 AT 模型来生成正逆蒸馏数据集</li>
+<li>拼接这两个数据集为一个蒸馏数据集以互补</li>
+<li>在新的蒸馏数据集上训练 NAT 模型</li>
+</ol>
+<p>通过上述方法，作者希望：<strong>蒸馏数据能够保持低模优势</strong>的同时；<strong>双语蒸馏能够找回更多的 LFW 对齐连接并且伴随着更高质量的对齐，从而为模型带来总体的性能提升</strong>。</p>
+<h4 id="Low-Frequency-Rejuvenation-LFR"><a href="#Low-Frequency-Rejuvenation-LFR" class="headerlink" title="Low-Frequency Rejuvenation (LFR)"></a>Low-Frequency Rejuvenation (LFR)</h4><p>作者将上述的两种方法结合起来以进一步提升模型性能，又考虑到预训练效果和干净微调，故而将结合的流水线作为最佳训练策略，即 **$Raw \Rightarrow \overrightarrow{KD} + \overleftarrow{KD} \Rightarrow \overrightarrow{KD}$**。</p>
+<img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/LFR_1.png?raw=true" alt="LFR" style="zoom:50%;" />
+
+
+
+<h4 id="Results"><a href="#Results" class="headerlink" title="Results"></a>Results</h4><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/LFR_res.png?raw=true" alt="res" style="zoom:67%;" />
+
+<p>作者通过实验得出的结论大概有：</p>
+<ol>
+<li>显著且普遍地提升了 NAT 模型的翻译性能</li>
+<li>该性能提升主要依赖于低频词翻译准确率的提高</li>
+<li>在不同语系的数据集上，依旧大大地提升了 NAT 模型的性能</li>
+<li>在跨领域测试时，显示出了 LFR 方法能够增强 NAT 模型的领域鲁棒性</li>
+<li>在不同规模的数据集上，始终提升 NAT 模型性能的同时，在大规模数据集上显示出了更好的性能</li>
+<li>能够与 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2012.14583.pdf">Ding et al.</a> 的数据级方法互补</li>
+</ol>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NAT/" rel="tag">NAT</a></li></ul>
+
+            
+      
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/12/01/Context-Aware-Cross-Attention-for-Non-Autoregressive-Translation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Context-Aware Cross-Attention for Non-Autoregressive Translation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Pretraining-with-Raw-Data"><span class="nav-number">1.</span> <span class="nav-text">Pretraining with Raw Data</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bidirectional-Distillation-Training"><span class="nav-number">2.</span> <span class="nav-text">Bidirectional Distillation Training</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Low-Frequency-Rejuvenation-LFR"><span class="nav-number">3.</span> <span class="nav-text">Low-Frequency Rejuvenation (LFR)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Results"><span class="nav-number">4.</span> <span class="nav-text">Results</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2021 Sylvanas Forever All Rights Reserved.
+        
+            <span id="busuanzi_container_site_pv">
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
