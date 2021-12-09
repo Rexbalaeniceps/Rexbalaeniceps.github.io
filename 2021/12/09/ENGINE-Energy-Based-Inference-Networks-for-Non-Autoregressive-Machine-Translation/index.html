@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ENGINE: Energy-Based Inference Networks for Non-Autoregressive Machine Translation | Sylvanas Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="NAT" />
+  
+  
+  
+  
+  <meta name="description" content="知识蒸馏是一种用于将 AT 模型知识迁移到 NAT 模型的方法，它能够有效地帮助 NAT 模型缓解多模问题(multi-modality problem)。准确的来说，通过一个已训练的 AT 模型来翻译原始语料中的源语言句子，然后将 AT 模型预测的翻译句子取代源预料中的 ground true，从而构造出蒸馏数据集(distill dataset)，最后 NAT 模型将在蒸馏数据集上进行训练。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ENGINE: Energy-Based Inference Networks for Non-Autoregressive Machine Translation">
+<meta property="og:url" content="http://example.com/2021/12/09/ENGINE-Energy-Based-Inference-Networks-for-Non-Autoregressive-Machine-Translation/index.html">
+<meta property="og:site_name" content="Sylvanas Forever">
+<meta property="og:description" content="知识蒸馏是一种用于将 AT 模型知识迁移到 NAT 模型的方法，它能够有效地帮助 NAT 模型缓解多模问题(multi-modality problem)。准确的来说，通过一个已训练的 AT 模型来翻译原始语料中的源语言句子，然后将 AT 模型预测的翻译句子取代源预料中的 ground true，从而构造出蒸馏数据集(distill dataset)，最后 NAT 模型将在蒸馏数据集上进行训练。">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ENGINE_1.png?raw=true">
+<meta property="article:published_time" content="2021-12-09T06:40:14.000Z">
+<meta property="article:modified_time" content="2021-12-09T06:41:30.409Z">
+<meta property="article:author" content="wbxu">
+<meta property="article:tag" content="NAT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ENGINE_1.png?raw=true">
+  
+    <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css" >
+  <link rel="stylesheet" href="/css/fashion.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+
+
+<header id="allheader" class="site-header" role="banner" 
+   >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="149px" height="200px" alt="Hike News" src=" /Syl.jpg">
+              </a>
+            
+          </h1>
+          
+          
+            <div class="site-description">wbxu&#39;s blog</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="/"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="archives"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="categories"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="tags"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="about"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-ENGINE-Energy-Based-Inference-Networks-for-Non-Autoregressive-Machine-Translation" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" target="_blank" href="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ENGINE_1.png?raw=true" rel="gallery_ckwylenyx000080ot6hbx0hw1 noopener">
+        <img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ENGINE_1.png?raw=true" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      ENGINE: Energy-Based Inference Networks for Non-Autoregressive Machine Translation
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2021/12/09/ENGINE-Energy-Based-Inference-Networks-for-Non-Autoregressive-Machine-Translation/" class="article-date">
+	  <time datetime="2021-12-09T06:40:14.000Z" itemprop="datePublished">December 9, 2021</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a>
+ 
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>知识蒸馏是一种用于将 AT 模型知识迁移到 NAT 模型的方法，它能够有效地帮助 NAT 模型缓解多模问题(multi-modality problem)。准确的来说，通过一个已训练的 AT 模型来翻译原始语料中的源语言句子，然后将 AT 模型预测的翻译句子取代源预料中的 ground true，从而构造出蒸馏数据集(distill dataset)，最后 NAT 模型将在蒸馏数据集上进行训练。</p>
+<span id="more"></span>
+
+<p>但是，<strong>这种方法将会导致 NAT 模型只能够学习到 AT 模型在固定的数据集上的知识</strong>，从而导致 NAT 模型的性能落后于 AT 模型。为此，作者<strong>将 NAT 模型视作一个推理网络(inference network)， 该网络被训练以最小化 AT 教师模型的能量(energy)<strong>。作者认为这能</strong>让 NAT 模型学习到额外的能量信息</strong>。为了能够让推理网络最小化 AT 能量，这个能量就必须关于推理网络的输出是可微的，这样就可以进行基于梯度的优化。</p>
+<h4 id="Energy"><a href="#Energy" class="headerlink" title="Energy"></a>Energy</h4><p>对于一个自回归的神经机器翻译系统而言，由链式条件分解有：<br>$$<br>\large \log p_{\Theta} (y \mid x) = \sum_{t=1}^{\mid y \mid} \log p_{\Theta} (y_t \mid y_{0:t-1}, x)<br>$$</p>
+<p>这个模型就可以被视作一个基于能量的模型(energy-based model)，而其**能量函数(Energy Function)**为：<br>$$<br>\large E_{\Theta} (x, y) = - \log p_{\Theta} (y \mid x)<br>$$</p>
+<p>给定训练的参数 $\Theta$，模型进行推理时就是需要找到一个能够最小化能量(energy)的翻译句子：<br>$$<br>\large \hat{y} =  \underset{y}{\operatorname {argmin}} E_{\Theta} (x, y)<br>$$</p>
+<p>想要找到最小化能量的翻译句子就会涉及到组合搜索(combinatorial search)，作者训练一个推理网络来近似这种组合搜索。其想法就是：<strong>用一个被训练来生成近似最优预测的网络的输出来代替测试时的组合搜索，尤其是被应用在结构化预测中的组合搜索</strong>。而这个推理网络 $A_{\Psi}$ 需要将输入序列 $x$ 映射为翻译序列 $y$，其训练目标函数为 $A_{\Psi} \approx \underset{y}{\operatorname {argmin}} E_{\Psi} (x, y)$，而推理网络参数 $\Psi$ 的训练方法如下：<br>$$<br>\large \hat{\Psi} =  \underset{\Psi}{\operatorname {argmin}} \sum_{\left\langle x, y \right\rangle \in \mathcal{D}} E_{\Theta} (x, A_{\Psi} (x))<br>$$</p>
+<p>值得注意的是，推理网络 $A_{\Psi}$ 的模型结构可以不同于 Energy Function 的模型结构，因此，作者将 NAT 模型作为推理网络，而 AT 模型作为功能函数。其目标就是：<strong>兼取 AT 模型的高质量和 NAT 模型的低时延</strong>。</p>
+<h4 id="Energy-Function"><a href="#Energy-Function" class="headerlink" title="Energy Function"></a>Energy Function</h4><p>为了能够对推理网络的参数 $\Psi$ 进行基于梯度的优化，作者将 $y$ 定义为翻译句子上的词分布序列，具体形式如下：<br>$$<br>\large E_{\Theta} (x, y) = \sum_{t=1}^{\mid y \mid} e_t (x, y)<br>$$<br>$$<br>\large e_t (x, y) = - y_t^T \log p_{\Theta} (\ \dot\ \mid y_0, y_1, \dots, y_{t-1}, x)<br>$$<br>上式中的 $p_{\Theta} (\ \dot\ \mid y_0, y_1, \dots, y_{t-1}, x)$ 表示词上的完整分布。</p>
+<p>通过使用独热分布来代替单词，作者又恢复了原始能量；而为了训练一个推理网络以最小化这种能量，作者所需要的一个能够生成词分布序列的网络结构，NAT 模型则恰好满足。因为原始能量所涉及的分布是独热的，对推理网络来说，输出独热或近似独热的分布也是有利的。作者将推理网络视作生成一个长度为 $T$ 的预测向量 $z_t$ 序列的模块，然后再考虑两个操作 $O_1$ 和 $O_2$，它们会被用于将这些预测向量映射成词分布以用于计算能量。模型总览如下图所示：</p>
+<img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ENGINE_1.png?raw=true" alt="model" style="zoom:50%;" />
+
+
+
+<h4 id="Operators"><a href="#Operators" class="headerlink" title="Operators"></a>Operators</h4><p>如上所述，作者需要两个操作 $O_1$ 和 $O_2$ 来管理推理网络和能量函数之间的接口，其中：$O_1$ 需要调节推理网络输出的预测向量 $z_t$，然后将其喂给能量函数中的解码器；$O_2$ 需要决定如何使用词分布 $p_{\Theta}$ 来计算单词 $y$ 的对数概率。最终，能量函数的局部被改写为如下形式：<br>$$<br>\large e_t (x, y) = - O_2 (z_t)^T \log p_{\Theta} (\ \dot\ \mid O_1 (z_0), O_1 (z_1), \dots, O_1 (z_{t-1}), x)<br>$$</p>
+<p>通过实验比较，作者最终将 $Softmax$ 作为 $O_1$ 操作，而将 $Straight-Through$ 作为 $O_2$ 操作。</p>
+<h4 id="Results"><a href="#Results" class="headerlink" title="Results"></a>Results</h4><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/ENGINE.png?raw=true" alt="res"></p>
+<p>通过实验，作者得出一下结论：</p>
+<ol>
+<li>能量函数加上推理网络始终优于使用蒸馏数据集的 NAT 模型；</li>
+<li>10 次迭代后，ENGINE 在 WMT16 Ro-En 数据集上优于 CMLM；</li>
+<li>1 次迭代的情况下，ENGINE 优于很多其他的迭代式 NAT 模型。</li>
+</ol>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NAT/" rel="tag">NAT</a></li></ul>
+
+            
+      
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/12/05/Rejuvenating-Low-Frequency-Words-Making-the-Most-of-Parallel-Data-in-Non-Autoregressive-Translation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Rejuvenating Low-Frequency Words: Making the Most of Parallel Data in Non-Autoregressive Translation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Energy"><span class="nav-number">1.</span> <span class="nav-text">Energy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Energy-Function"><span class="nav-number">2.</span> <span class="nav-text">Energy Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Operators"><span class="nav-number">3.</span> <span class="nav-text">Operators</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Results"><span class="nav-number">4.</span> <span class="nav-text">Results</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2021 Sylvanas Forever All Rights Reserved.
+        
+            <span id="busuanzi_container_site_pv">
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
