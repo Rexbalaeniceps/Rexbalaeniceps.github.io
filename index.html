@@ -110,6 +110,247 @@
         
           <section id="main">
   
+    <article id="post-Math-1-3"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2021/12/24/Math-1-3/">Math 1-3</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2021/12/24/Math-1-3/" class="article-date">
+	  <time datetime="2021-12-24T15:42:33.000Z" itemprop="datePublished">December 24, 2021</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Combinatorial-Mathematices/">Combinatorial Mathematices</a>
+ 
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="§-第一章-排列、组合、二项式定理"><a href="#§-第一章-排列、组合、二项式定理" class="headerlink" title="§ 第一章 排列、组合、二项式定理"></a>§ 第一章 排列、组合、二项式定理</h3><h4 id="Ⅰ-分配问题"><a href="#Ⅰ-分配问题" class="headerlink" title="$Ⅰ$ 分配问题"></a>$Ⅰ$ 分配问题</h4><ol>
+<li>将 $n$ 个 <strong>不同的的小球</strong> 放入 $r$ 个 <strong>不同的盒子</strong> 中，且 <strong>允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large r^n$$</p>
+<p>解: 对于第 $i$ 个小球来说, 它都有 $r$ 个盒子可以放 $(i = 1, 2, \dots)$<br>所以一共有 $r^n$ 种分配方案。</p>
+<ol start="2">
+<li>将 $n$ 个 <strong>不同的的小球</strong> 放入 $r$ 个 <strong>不同的盒子</strong> 中，且 <strong>不允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large r! S(n, r)$$</p>
+<p>解: 因为小球各不相同且每个盒子又不能为空<br>所以, 可以看作是对小球的集合 $M$ 进行 $r$ 分划, 即 $S(n, r)$<br>又因为盒子也各不相同<br>所以还需要对分划后的 $r$ 个小球子集进行排列, 即 $r!$<br>综上所述, 一共有 $r! S(n, r)$ 种分配方案。</p>
+<ol start="3">
+<li>将 $n$ 个 <strong>不同的的小球</strong> 放入 $r$ 个 <strong>相同的盒子</strong> 中，且 <strong>允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large \sum_{i=1}^{r} S(n, i)$$</p>
+<p>解: 因为允许盒子为空且盒子都是一样的, 那么空盒的个数就可能为 $r-1, r-2, \dots, 0$<br>对于非空盒为 $i\ \ (i = 1, 2, \dots)$ 个的情况, 那么我们只需要对不同小球集合 $M$ 进行 $i$ 分划即可<br>又因为盒子完全相同, 所以无须排列<br>综上所述, 一共有 $\sum_{i=1}^{r} S(n, i)$ 种分配方案</p>
+<ol start="4">
+<li>将 $n$ 个 <strong>不同的的小球</strong> 放入 $r$ 个 <strong>相同的盒子</strong> 中，且 <strong>不允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large S(n, r)$$</p>
+<p>解: 因为盒子完全相同且不允许存在空盒<br>所以直接将不同小球集合 $M$ 进行 $r$ 分划即可<br>因此, 一共有 $S(n, r)$ 种分配方案</p>
+<ol start="5">
+<li>将 $n$ 个 <strong>相同的的小球</strong> 放入 $r$ 个 <strong>不同的盒子</strong> 中，且 <strong>允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large \binom{n+r-1}{r-1} $$</p>
+<p>解: 相当于求 $x_1 + x_2 + \dots + x_r = n$ 的非负整数解个数<br>此时将 $r-1$ 个 $0$ 作为分隔符插入到 $n$ 个 $1$ 里面, 那个结果字串就可以表示一种非负整数解<br>因此原题又相当于多重集合 $M = {n \times 1, (r-1) \times 0}$ 的全排列数<br>由书上定理可知, 其全排列数为 $\frac{(n+r-1)!}{n! (r-1)!} = \binom{n+r-1}{r-1} $<br>因此, 一共有 $\binom{n+r-1}{r-1}$ 种分配方案</p>
+<ol start="6">
+<li>将 $n$ 个 <strong>相同的的小球</strong> 放入 $r$ 个 <strong>不同的盒子</strong> 中，且 <strong>不允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large \binom{n-1}{r-1} $$</p>
+<p>解: 相当于求 $x_1 + x_2 + \dots + x_r = n$ 的正整数解个数<br>令 $ y_i = x_i - 1$, 则有 $y_1 + y_2 + \dots + y_r = n - r$ 且 $y_i \nless 0$ $(i = 1, 2, \dots, r)$<br>因此相当于求 $y_1 + y_2 + \dots + y_r = n - r$ 的非负整数解个数<br>此时将 $r-1$ 个 $0$ 作为分隔符插入到 $n-r$ 个 $1$ 里面, 那个结果字串就可以表示一种非负整数解<br>因此原题又相当于多重集合 $M = {(n-r) \times 1, (r-1) \times 0}$ 的全排列数<br>由书上定理可知, 其全排列数为 $\frac{[(n-r)+(r-1)]!}{(n-r)! (r-1)!} = \binom{n-1}{r-1} $<br>因此, 一共有 $\binom{n-1}{r-1}$ 种分配方案</p>
+<ol start="7">
+<li>将 $n$ 个 <strong>相同的的小球</strong> 放入 $r$ 个 <strong>相同的盒子</strong> 中，且 <strong>允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large \sum_{i=1}^{r} B(n, i)$$</p>
+<p>解:  因为允许盒子为空且盒子都是一样的, 那么空盒的个数就可能为 $r-1, r-2, \dots, 0$<br>对于非空盒为 $i\ \ (i = 1, 2, \dots)$ 个的情况, 那么我们只需要对 $n$ 进行 $i$ 无序分拆即可<br>综上所述, 一共有 $\sum_{i=1}^{r} B(n, i)$ 种分配方案</p>
+<ol start="8">
+<li>将 $n$ 个 <strong>相同的的小球</strong> 放入 $r$ 个 <strong>相同的盒子</strong> 中，且 <strong>不允许</strong> 存在空盒</li>
+</ol>
+<p>$$\large B(n, r)$$</p>
+<p>解: 因为盒子完全相同且不允许存在空盒<br>所以直接将 $n$ 进行 $r$ 无序分拆即可<br>因此, 一共有 $B(n, r)$ 种分配方案</p>
+<h4 id="Ⅱ-多重集合排列和组合的证明"><a href="#Ⅱ-多重集合排列和组合的证明" class="headerlink" title="$Ⅱ$ 多重集合排列和组合的证明"></a>$Ⅱ$ 多重集合排列和组合的证明</h4><ol>
+<li>多重集合 $M = {k_1 \cdot a_1, k_2 \cdot a_2, \dots, k_n \cdot a_n}$ 的全排列数</li>
+</ol>
+<p>$$\Large \frac{(k_1 + k_2 + \dots + k_n)!}{k_1! k_2! \cdots k_n!}$$</p>
+<p>证: $M$ 的全排列中, $a_1$ 占了 $k_1$ 个<br>又因为所有的 $a_1$ 都完全相同, 所以不需要排列<br>于是, 对 $a_1$ 有 $\binom{k_1 + k_2 + \dots + k_n}{k_1}$ 种方案<br>类似地, 在 $M$ 剩余的 $k_2 + k_3 + \dots + k_n$ 位置中, $a_2$ 占了 $k_2$ 个<br>又因为 $a_2$ 完全相同, 所以不用排列<br>于是, 对 $a_2$ 有 $\binom{ k_2 + k_3 + \dots + k_n}{k_1}$ 种方案<br>以此类推并由乘法原则可知一共有<br>$$\large \binom{k_1 + k_2 + \dots + k_n}{k_1} \cdot \binom{ k_2 + k_3 + \dots + k_n}{k_1} \cdots \binom{k_n}{k_n}$$</p>
+<p>$= $ $$\large \frac{(k_1 + k_2 + \dots + k_n)!}{k_1!(k_2 + k_3 + \dots + k_n)!} \cdot \frac{(k_2 + k_3 + \dots + k_n)!}{k_2!(k_3 + k_4 + \dots + k_n)!} \cdots \frac{k_n!}{k_n!} $$</p>
+<p>$= $ $$\Large \frac{(k_1 + k_2 + \dots + k_n)!}{k_1! k_2! \cdots k_n!}$$</p>
+<ol start="2">
+<li>多重集合 $M = {\infty \cdot a_1, \infty \cdot a_2, \dots, \infty \cdot a_n}$ 的 $r$ 组合数</li>
+</ol>
+<p>$$\Large \binom{r + n - 1}{r}$$</p>
+<p>证: 假设 $x_i$ 表示 $a_i$ 被选取的个数 ($i = 1, 2, \dots, n$)<br>那么就相当于求 $x_1 + x_2 + \dots + x_n = r$ 的非负整数解个数<br>我们将 $n-1$ 个 $0$ 插入到 $r$ 个 $1$ 串中去, 那么就会被划分出 $n$ 个 $1$ 的字串, 而第 $i$ 的字串中 $1$ 的个数就表示 $x_i$ 的取值大小<br>先定义多重集合 $N = {r \times 1, (n-1) \times 0}$<br>因此, 我们可以知道一种上述的 $10$ 串就可以唯一对应上述方程的一个非负整数解<br>即, 多重集合 $N$ 的 $r$ 组合数与方程的非负整数解一一对应<br>故原题又相当于求多重集合 $N = {r \times 1, (n-1) \times 0}$ 的全排列数<br>由书上定理可知, 其全排列数为 $\frac{[r+(n-1)]!}{r! (n-1)!} = \binom{r+n-1}{r} $<br>因此, 一共有 $\binom{r+n-1}{r}$ 种分配方案</p>
+<h4 id="Ⅲ-二项式定理"><a href="#Ⅲ-二项式定理" class="headerlink" title="$Ⅲ$ 二项式定理"></a>$Ⅲ$ 二项式定理</h4><p>$$\large (x+y)^n = \binom{n}{0} y^n + \binom{n}{1} x^1 y^{n-1} + \dots + \binom{n}{n-1} x^{n-1} y^1 + \binom{n}{n} x^n$$</p>
+<p>即 $$\large (x+y)^n = \sum_{i=0}^{n} \binom{n}{i} x^i y^{n-i}$$</p>
+<h4 id="Ⅳ-分划数的性质"><a href="#Ⅳ-分划数的性质" class="headerlink" title="$Ⅳ$ 分划数的性质"></a>$Ⅳ$ 分划数的性质</h4><ol>
+<li><p>$$\large S(n, 1) = 1$$</p>
+</li>
+<li><p>$$\large S(n, 2) = 2^{n-1} - 1$$</p>
+</li>
+<li><p>$$\large S(n, r) = S(n-1, r-1) + r S(n-1, r)$$</p>
+</li>
+<li><p>$$\large S(n, n-1) = \binom{n}{2}$$</p>
+</li>
+<li><p>$$\large S(n, n) = 1$$</p>
+</li>
+</ol>
+<h4 id="Ⅴ-无序分拆数的性质"><a href="#Ⅴ-无序分拆数的性质" class="headerlink" title="$Ⅴ$ 无序分拆数的性质"></a>$Ⅴ$ 无序分拆数的性质</h4><ol>
+<li><p>$$\large B(n, 1) = 1$$</p>
+</li>
+<li><p>$$\large B(n, 2) = \lfloor \frac{n}{2} \rfloor$$</p>
+</li>
+<li><p>$$\large B(n) = \sum_{k=1}^{n} B(n, k)$$</p>
+</li>
+<li><p>$$\large B(n+k, k) = B(n, 1) + B(n, 2) + \dots + B(n, k)$$</p>
+</li>
+<li><p>$$\large B(n, n) = 1$$</p>
+</li>
+</ol>
+<h3 id="§-第二章-容斥原理与鸽巢原理"><a href="#§-第二章-容斥原理与鸽巢原理" class="headerlink" title="§ 第二章 容斥原理与鸽巢原理"></a>§ 第二章 容斥原理与鸽巢原理</h3><h4 id="Ⅰ-容斥原理的三个表示"><a href="#Ⅰ-容斥原理的三个表示" class="headerlink" title="$Ⅰ$ 容斥原理的三个表示"></a>$Ⅰ$ 容斥原理的三个表示</h4><ol>
+<li>设 $S$ 是一有限集合, $P_1, P_2, \dots, P_m$ 是同集合 $S$ 有关的 $m$ 个性质, 设 $A_i$ 为 $S$ 中具有性质 $P_i$ 的元素构成的集合 ($1 \leqslant i \leqslant  m$), $\bar{A_i}$ 是 $S$ 中不具有性质 $P_i$ 的元素构成的集合 ($1 \leqslant i \leqslant  m$), 则 $S$ 中不具有全部 $m$ 个性质的元素个数为</li>
+</ol>
+<p>$$\large |\bar{A_1} \cap \bar{A_2} \cap \dots \cap \bar{A_m}| = |S| - \sum_{i=1}^{m}|A_i| + \sum_{1 \leqslant i \ne j \leqslant m}^{m} |A_i \cap A_j| - \dots + (-1)^{m} |A_1 \cap A_2 \cap \dots \cap A_m|$$</p>
+<ol start="2">
+<li>设 $S$ 是一有限集合, $P_1, P_2, \dots, P_m$ 是同集合 $S$ 有关的 $m$ 个性质, 设 $A_i$ 为 $S$ 中具有性质 $P_i$ 的元素构成的集合 ($1 \leqslant i \leqslant  m$), $\bar{A_i}$ 是 $S$ 中不具有性质 $P_i$ 的元素构成的集合 ($1 \leqslant i \leqslant  m$), 则 $S$ 中至少具有一个性质的元素个数为</li>
+</ol>
+<p>$$\large |A_1 \cup A_2 \cup \dots \cup A_m| = \sum_{i=1}^{m}|A_i| - \sum_{1 \leqslant i \ne j \leqslant m}^{m} |A_i \cap A_j| + \dots + (-1)^{m-1} |A_1 \cap A_2 \cap \dots \cap A_m|$$</p>
+<ol start="3">
+<li>设集合 $S$ 中具有性质集合 $P = {P_1, P_2, \dots, P_m}$ 中恰有 $r$ 个性质的元素个数为 $N(r)$, 则</li>
+</ol>
+<p>$$\large N(r) = w(r) - \binom{r+1}{r} w(r+1) + \binom{r+2}{r} w(r+2) - \dots + (-1)^{m-r} \binom{m}{r} w(m)$$</p>
+<p>其中, $w(0) = |S|$, $w(r) = \sum_{1 \leqslant i_1 \leqslant \dots \leqslant i_r \leqslant m} N(P_{i_1}, P_{i_2}, \dots, P_{i_r})$, 而 $N(P_{i_1}, P_{i_2}, \dots, P_{i_r})$ 表示 $S$ 中具有性质 $P_{i_1}, P_{i_2}, \dots, P_{i_r}$ 的元素个数</p>
+<h4 id="Ⅱ-容斥原理应用"><a href="#Ⅱ-容斥原理应用" class="headerlink" title="$Ⅱ$ 容斥原理应用"></a>$Ⅱ$ 容斥原理应用</h4><ol>
+<li>求任意多重集合 $M$ 的 $r$ 组合数<ul>
+<li>设 $S_{\infty} = { \infty \cdot a_i }$</li>
+<li>取集合 $A$ 为 $S_{\infty}$ 的 $r$ 组合全体</li>
+<li>定义性质集合 $P$</li>
+<li>假设 $a_1$ 元素在 $M$ 中的个数为 x, 那么 $P_1$ 应该指 $r$ 组合中 $a_1$ 的个数大于等于 $x+1$</li>
+<li>取集合 $A_i$ 为满足性质 $P_i$ 的 $r$ 组合全体</li>
+<li>计算容斥原理中剩余的各个项</li>
+<li>使用容斥原理求解答案</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li>错排问题</li>
+</ol>
+<p>$$\large D_n = n! (1 - \frac{1}{1!} + \frac{1}{2!} - \dots + (-1)^n \frac{1}{n!})$$</p>
+<ol start="3">
+<li>有禁止模式的错排问题</li>
+</ol>
+<p>$$\large Q_n = n! - \binom{n-1}{1} (n-1)! + \binom{n-1}{2} (n-2)! - \dots + (-1)^{n-1} \binom{n-1}{n-1} 1! = D_n + D_{n-1}$$</p>
+<h4 id="Ⅲ-鸽巢原理"><a href="#Ⅲ-鸽巢原理" class="headerlink" title="$Ⅲ$ 鸽巢原理"></a>$Ⅲ$ 鸽巢原理</h4><ol>
+<li>如果把 $n+1$ 个物体放入 $n$ 个盒子里, 那么至少有一个盒子里有两个或更多的的物体</li>
+</ol>
+<ol start="2">
+<li>设 $a_1, a_2, \dots, a_n$ 都是正整数, 如果把 $a_1 + a_2 + \dots + a_n - n + 1$ 个物体放入 $n$ 个盒子中, 那么至少存在一个 $i \in [1, n]$, 使得第 $i$ 个盒子至少包含 $a_i$ 个物体</li>
+</ol>
+<h4 id="Ⅳ-鸽巢原理应用"><a href="#Ⅳ-鸽巢原理应用" class="headerlink" title="$Ⅳ$ 鸽巢原理应用"></a>$Ⅳ$ 鸽巢原理应用</h4><ol>
+<li>寻找和题目条件相关的数值组合、区间等</li>
+<li>对数据进行分组</li>
+<li>因为须要从 $m$ 个组中选择 $m+1$ 个数</li>
+<li>所以, 由鸽巢原理可证原题关系</li>
+</ol>
+<h3 id="§-第三章-递推关系"><a href="#§-第三章-递推关系" class="headerlink" title="§ 第三章 递推关系"></a>§ 第三章 递推关系</h3><h4 id="Ⅰ-非齐次特解"><a href="#Ⅰ-非齐次特解" class="headerlink" title="$Ⅰ$ 非齐次特解"></a>$Ⅰ$ 非齐次特解</h4><table>
+<thead>
+<tr>
+<th align="left">非齐次项</th>
+<th align="left">是否为特征根</th>
+<th align="left">非齐次特解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$\beta^{n}$</td>
+<td align="left">$\beta$ 为 $m$ 重特征根</td>
+<td align="left">$\alpha \cdot n^m \cdot \beta^n$</td>
+</tr>
+<tr>
+<td align="left">$\beta^{n}$</td>
+<td align="left">$\beta$ 不为特征根</td>
+<td align="left">$\alpha \cdot \beta^n$</td>
+</tr>
+<tr>
+<td align="left">$n^s$</td>
+<td align="left">$1$ 为 $m$ 重特征根</td>
+<td align="left">$n^m \cdot (b_s \cdot n^s + b_{s-1} \cdot n^{s-1} + \dots + b_1 \cdot n + b_0)$</td>
+</tr>
+<tr>
+<td align="left">$n^s$</td>
+<td align="left">$1$ 不为特征根</td>
+<td align="left">$b_s \cdot n^s + b_{s-1} \cdot n^{s-1} + \dots + b_1 \cdot n + b_0$</td>
+</tr>
+<tr>
+<td align="left">$n^s \beta^n$</td>
+<td align="left">$\beta$ 为 $m$ 重特征根</td>
+<td align="left">$n^m \cdot (b_s \cdot n^s + b_{s-1} \cdot n^{s-1} + \dots + b_1 \cdot n + b_0) \beta^n$</td>
+</tr>
+<tr>
+<td align="left">$n^s \beta^n$</td>
+<td align="left">$\beta$ 不为特征根</td>
+<td align="left">$(b_s \cdot n^s + b_{s-1} \cdot n^{s-1} + \dots + b_1 \cdot n + b_0) \beta^n$</td>
+</tr>
+</tbody></table>
+<h4 id="Ⅱ-迭代法"><a href="#Ⅱ-迭代法" class="headerlink" title="$Ⅱ$ 迭代法"></a>$Ⅱ$ 迭代法</h4><ol>
+<li>解题步骤<ul>
+<li>求解 $f(n) = F(f(\le n))$ 的迭代关系: $f(n) = \dots = F(?) + f(1)$</li>
+<li><strong>数学归纳法</strong>证明之<ul>
+<li>证明 $k=1$ 时, 上式成立</li>
+<li>假设 $n=k$ 时, 上式成立</li>
+<li>证明 $n=k+1$ 时, 上式成立</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li>转换递推关系<ul>
+<li>将变系数的一阶线性递推关系转换为常系数的线性递推关系</li>
+<li>将一阶高次递推关系通过变量代换为一阶线性递推关系式</li>
+</ul>
+</li>
+</ol>
+<h4 id="Ⅲ-Fibonacci-数和-Catalan-数"><a href="#Ⅲ-Fibonacci-数和-Catalan-数" class="headerlink" title="$Ⅲ$ Fibonacci 数和 Catalan 数"></a>$Ⅲ$ Fibonacci 数和 Catalan 数</h4><ol>
+<li>Fibonacci 数的性质</li>
+</ol>
+<p>$$\large f(n) = f(n-1) + f(n-2)\ \ and\ \ f(1)=1, f(0)=1$$</p>
+<p>$$\large f(n) = \binom{n}{0} + \binom{n-1}{1} + \dots + \binom{n-k}{k}\ \ and\ \ k = \lfloor \frac{n}{2} \rfloor$$</p>
+<ol start="2">
+<li>Catalan 数</li>
+</ol>
+<p>$n$ 个 $+1$ 和 $n$ 个 $-1$ 构成的 $2n$ 项 $a_1, a_2, \dots, a_{2n}$, 其部分和满足 $a_1 + a_2 + \dots + a_k \geqslant 0$ ($k = 1, 2, \dots, 2n$) 的数列的个数等于第 $n$ 个 Catalan 数</p>
+<p>$$\large C_n = \frac{1}{n+1} \binom{2n}{n}$$</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Combinatorial-Mathematices/">Combinatorial Mathematices</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Combinatorial-Mathematices/" rel="tag">Combinatorial Mathematices</a></li></ul>
+
+            
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+  
     <article id="post-How-does-Length-Prediction-Influence-the-Performance-of-Non-Autoregressive-Translation"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -664,70 +905,6 @@
 <!-- Table of Contents -->
 
   
-    <article id="post-Connectionist-Temporal-Classification"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2021/11/26/Connectionist-Temporal-Classification/">Connectionist Temporal Classification</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	<a href="/2021/11/26/Connectionist-Temporal-Classification/" class="article-date">
-	  <time datetime="2021-11-26T07:21:26.000Z" itemprop="datePublished">November 26, 2021</time>
-	</a>
-
-      
-	<span class="ico-folder"></span>
-    <a class="article-category-link" href="/categories/Speech-Recognition/">Speech Recognition</a>
- 
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-          <div class="entry-thumbnail">
-            <a href="/2021/11/26/Connectionist-Temporal-Classification/"><img src="https://distill.pub/2017/ctc/assets/speech.svg" class="attachment-thumb-featured size-thumb-featured wp-post-image" alt=""></a>
-          </div>
-          <div class="entry-summary">
-          CTC 的提出就是旨在解决输入和输出之间没有先验对齐的情况。
-
-本文来自Sequence Modeling With CTC，非常好的文章，中文是我自己翻译，如有错误还望赐教！
-
-
-        
-          <p class="article-more-link">
-            <a href="/2021/11/26/Connectionist-Temporal-Classification/#more">Continue Reading →</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    <a class="article-category-link" href="/categories/Speech-Recognition/">Speech Recognition</a>
-
-      
-  <span class="ico-tags"></span>
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTC/" rel="tag">CTC</a></li></ul>
-
-            
-    </footer>
-    <hr class="entry-footer-hr">
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-  
 
 
   <nav id="page-nav">
@@ -838,6 +1015,21 @@
 
             
               <div class="widget-entry-thumbnail">
+                <a href="/2021/12/24/Math-1-3/" title=""><img width="50" height="50" src="https://s2.ax1x.com/2019/07/25/eeoH0g.png" class="attachment-thumb-small size-thumb-small wp-post-image" alt="preview-16" title=""></a>
+              </div>
+              <div class="widget-entry-summary">
+            
+
+              <h6 style="margin: 0;"><a href="/2021/12/24/Math-1-3/">Math 1-3</a></h6>
+              <span>December 24, 2021</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-thumbnail">
                 <a href="/2021/12/17/How-does-Length-Prediction-Influence-the-Performance-of-Non-Autoregressive-Translation/" title=""><img width="50" height="50" src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/hli.png?raw=true" class="attachment-thumb-small size-thumb-small wp-post-image" alt="preview-16" title=""></a>
               </div>
               <div class="widget-entry-summary">
@@ -909,21 +1101,6 @@
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-thumbnail">
-                <a href="/2021/12/01/LAT-NAT/" title=""><img width="50" height="50" src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/LAT.png?raw=true" class="attachment-thumb-small size-thumb-small wp-post-image" alt="preview-16" title=""></a>
-              </div>
-              <div class="widget-entry-summary">
-            
-
-              <h6 style="margin: 0;"><a href="/2021/12/01/LAT-NAT/">LAT-NAT</a></h6>
-              <span>December 1, 2021</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -933,7 +1110,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Neural-Machine-Translation/">Neural Machine Translation</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Speech-Recognition/">Speech Recognition</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Statistical-Machine-Translation/">Statistical Machine Translation</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Combinatorial-Mathematices/">Combinatorial Mathematices</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Neural-Machine-Translation/">Neural Machine Translation</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Non-Autoregressive-Translation/">Non-Autoregressive Translation</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Speech-Recognition/">Speech Recognition</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Statistical-Machine-Translation/">Statistical Machine Translation</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -944,7 +1121,7 @@
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">8</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">8</span></li></ul>
     </div>
   </div>
 
