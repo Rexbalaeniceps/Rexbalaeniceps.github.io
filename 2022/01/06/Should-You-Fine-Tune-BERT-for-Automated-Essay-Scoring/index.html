@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Should You Fine-Tune BERT for Automated Essay Scoring? | Sylvanas Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="AES" />
+  
+  
+  
+  
+  <meta name="description" content="Should You Fine-Tune BERT for Automated Essay Scoring? 如今，大多数 NLP 研究都选择微调大型预训练模型来学习有监督分类任务。作者调研了深度神经模型是否是 AES 领域恰当的技术选择，并发现微调 BERT 所产生的性能类似于早期的经典模型，但是却需要巨大的额外花销。作者在最后总结了 AES 领域研究中的有希望的发展方向，其中 Transfor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Should You Fine-Tune BERT for Automated Essay Scoring?">
+<meta property="og:url" content="http://example.com/2022/01/06/Should-You-Fine-Tune-BERT-for-Automated-Essay-Scoring/index.html">
+<meta property="og:site_name" content="Sylvanas Forever">
+<meta property="og:description" content="Should You Fine-Tune BERT for Automated Essay Scoring? 如今，大多数 NLP 研究都选择微调大型预训练模型来学习有监督分类任务。作者调研了深度神经模型是否是 AES 领域恰当的技术选择，并发现微调 BERT 所产生的性能类似于早期的经典模型，但是却需要巨大的额外花销。作者在最后总结了 AES 领域研究中的有希望的发展方向，其中 Transfor">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/syf_3.png?raw=true">
+<meta property="article:published_time" content="2022-01-06T14:33:52.000Z">
+<meta property="article:modified_time" content="2022-01-06T14:36:48.355Z">
+<meta property="article:author" content="wbxu">
+<meta property="article:tag" content="AES">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/syf_3.png?raw=true">
+  
+    <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css" >
+  <link rel="stylesheet" href="/css/fashion.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+
+
+<header id="allheader" class="site-header" role="banner" 
+   >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="149px" height="200px" alt="Hike News" src=" /Syl.jpg">
+              </a>
+            
+          </h1>
+          
+          
+            <div class="site-description">wbxu&#39;s blog</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="/"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="archives"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="categories"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="tags"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="about"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Should-You-Fine-Tune-BERT-for-Automated-Essay-Scoring" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" target="_blank" href="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/syf_3.png?raw=true" rel="gallery_cky32p8fs0000x0ot0m6rcowk noopener">
+        <img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/syf_3.png?raw=true" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Should You Fine-Tune BERT for Automated Essay Scoring?
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2022/01/06/Should-You-Fine-Tune-BERT-for-Automated-Essay-Scoring/" class="article-date">
+	  <time datetime="2022-01-06T14:33:52.000Z" itemprop="datePublished">January 6, 2022</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Automated-Essay-Scoring/">Automated Essay Scoring</a>
+ 
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://aclanthology.org/2020.bea-1.15/">Should You Fine-Tune BERT for Automated Essay Scoring?</a></p>
+<p>如今，大多数 NLP 研究都选择<strong>微调大型预训练模型来学习有监督分类任务</strong>。作者调研了深度神经模型是否是 AES 领域恰当的技术选择，并<strong>发现微调 BERT 所产生的性能类似于早期的经典模型，但是却需要巨大的额外花销</strong>。作者在最后<strong>总结了 AES 领域研究中的有希望的发展方向，其中 Transformer 模型的独有特点可能大有裨益</strong>。</p>
+<span id="more"></span>
+
+<h4 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h4><p>AES 旨在<strong>让计算机代替人类来为学生作文自动地评分</strong>，学生作文往往会以以下两种形式中的一种来进行打分：</p>
+<ol>
+<li><p><strong>针对总体质量的分数</strong> ($holistic$)</p>
+</li>
+<li><p><strong>针对某个维度的分数</strong> ($trait$)</p>
+</li>
+</ol>
+<p>而这些分数一般都介于 $0$ 到 $10$ 以内，当然也不乏有 $60$ 个点这样的大区间存在。除此之外，学生作文又可以根据其给定 $prompt$ 的不同进行划分。</p>
+<p>AES 方向的学者则倾向于使用一系列合理的变量来<strong>进行多变量回归</strong>。但这样的模型保留了变量和可识别的写作特征之间的直接映射，<strong>非常依赖于大量的特征工程</strong>。</p>
+<p>我们先说一下很重要的一个概念 —— <code>word representation</code>， 它经历了以下四个阶段：</p>
+<ol>
+<li><p>N-grams 词袋特征</p>
+</li>
+<li><p>语料特定的嵌入表示</p>
+</li>
+<li><p>通用嵌入表示</p>
+</li>
+<li><p>上下文化嵌入表示</p>
+</li>
+</ol>
+<p>如今对预训练模型 (诸如 $BERT$) 进行下游任务微调的方法盛行于世。而 $BERT$ 当属 $contextual$ $word$ $embeddings$ 的中的佼佼者，但它的参数量都是亿级的，这就会<strong>大大增加模型训练的花销</strong>。</p>
+<p>大量实验证明，<strong>以课程学习的方式控制模型学习率可以产生一个有效的微调过程</strong> 。然而，即使它的有效性是惊人且实际证明的，但是 <strong>$BERT$ 究竟学习到了什么仍然是未知数</strong>。</p>
+<p>再说回 AES，神经模型在 AES 方向中的应用还处于起步阶段，而且主要是作为一种自动作文反馈的中间表示，端到端的 AES 系统恐怕离实际商业应用还差得远。</p>
+<h4 id="Question"><a href="#Question" class="headerlink" title="Question"></a>Question</h4><p><code>从特征工程转为深度神经网络模型对于 AES 而言，是否值得</code> 是该论文主要研究的问题。</p>
+<blockquote>
+<p>for AES specifically, is a move to deep neural models worth the cost?</p>
+</blockquote>
+<h4 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h4><p>⭐ <em>Bag-of-Words Representations</em></p>
+<p>对于文本分类任务而言，词表示就是要抽取表面的 $1-grams$ 和 $2-grams$ 特征，并以 $one-hot$ 向量的二元值来表示其的存在与否。在 AES 中，该方法竟然十分有效，并还可以进一步提升其性能：</p>
+<ol>
+<li><p>额外增加 $POS$ 标签来捕捉文本内容中的句法独立性</p>
+</li>
+<li><p>字符级的 $3-grams$ 和 $4-grams$ 来捕捉单词拼写问题以提升其鲁棒性</p>
+</li>
+</ol>
+<p>但是，这种高维表示法通常有一个截止阈值，在这个阈值下，那些罕见的标记将会被排除在外。该文实验中：</p>
+<ul>
+<li><p>出现次数低于 $5$ 的那些 $N-grams$ 将会被去除 (即使经过这样的清理，它仍是一个有数千维的稀疏特征空间)</p>
+</li>
+<li><p>模型：<code>Scikit-learn</code> 中带有拉普拉斯平滑的朴素贝叶斯分类器</p>
+</li>
+<li><p>$POS$ 标记：来自 <code>SpaCy</code></p>
+</li>
+</ul>
+<p>⭐ <em>Word Embeddings</em></p>
+<p>词级嵌入往往是一个最高 $300$ 维的密集实值特征向量表示。</p>
+<p>该文实验中：</p>
+<ul>
+<li><p>作者将每个文档表示为 <code>GloVe</code> 词嵌入向量的术语频率加权平均值</p>
+</li>
+<li><p>词嵌入：<code>GloVe</code></p>
+</li>
+<li><p>模型：<code>Scikit-learn</code> 中带有利伯勒线性求解器和 $L2$ 正则化的逻辑回归分类器</p>
+</li>
+</ul>
+<p>⭐ <em>Fine-Tuning BERT</em></p>
+<p>作者微调的是 <code>Fast.ai</code> 库中的 <code>uncased BERT</code> 模型，而 <code>Fast.ai</code> 推荐使用周期性学习率来进行微调，即学习率会有一个上界和一个下界，而学习率则会在这两个界之间起伏。其中，较大的学习率可以充当一个正则化项来避免模型在训练中过拟合或者遭遇局部鞍点；较小的学习率则能够让模型更好地找到局部最优点。</p>
+<p>该文实验中：</p>
+<ul>
+<li>学习率上界设置为 $1e-5$，而学习率下界设置为 $4e-7$ ，这也是 <code>Fast.ai</code> 所推荐的设置</li>
+</ul>
+<ul>
+<li>除此之外，作者还实验了三种不同的学习率规划方案，如下：<ol>
+<li>“default” policy：学习率会在一个 epoch 内由低升高，再由高降低</li>
+<li>“2-rate” policy：学习率会在一个预设的 N epochs 后重新选择起伏区间</li>
+<li>“1-cycle” policy：学习率会在整个训练期间进行一次由低升高和由高降低的起伏变化</li>
+</ol>
+</li>
+</ul>
+<img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/syf_1.png?raw=true" alt="learning rate policies" style="zoom:80%;" />   
+
+<ul>
+<li><p>作者还实现了早停机制，当验证集上的准确率（QWK）下降超过0.01时就停止训练</p>
+</li>
+<li><p>还有一个问题就是 BERT 只能处理长度不大于 512 的文本，故作者将 ASAP 数据集中超过这个长度的作文给去除了（它们主要都来自于 Prompt2）</p>
+</li>
+</ul>
+<p>⭐ <em>Feature Extraction from BERT</em></p>
+<p>显然，单个的 $BERT$ 模型再加上数据集，就已经需要近 $10$ G 的显存了。这对于低资源研究者而言是生命所不能承受之重，故我们也可以直接从预训练的 $BERT$ 中抽取语义化特征来进行分类。具体地，当文本输入到 $BERT$ 中后，它会产生两个输出结果，一个是文本的隐藏表示序列，还有一个就是 $[CLS]$ 标记所输出的分类隐藏表示( $768$ 维)。这个 $768$ 维的隐藏表示可以直接喂给一个线性分类器，从而实现文本的分类。</p>
+<p>该文实验中：</p>
+<ul>
+<li><p>作者抽取出该隐藏表示作为输入</p>
+</li>
+<li><p>模型：<code>Scikit-learn</code> 中带有利伯勒线性求解器和 $L2$ 正则化的逻辑回归分类器</p>
+</li>
+</ul>
+<p>⭐ <em>DistilBERT</em></p>
+<p>$DistilBERT$ 模型是由 $BERT$ 模型蒸馏出来的学生模型，它能够以很小的性能衰减博得参数量的降低并且实现推理时延的大大减少，这对于低资源和快速推理都是比较友好的。</p>
+<p>该文实验中：</p>
+<ul>
+<li>$DistilBERT$ 模型只会实验 “1-cycle” policy</li>
+</ul>
+<h4 id="Results"><a href="#Results" class="headerlink" title="Results"></a>Results</h4><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/syf_2.png?raw=true" alt="Results about QWK error" style="zoom:80%;" />   
+
+<ol>
+<li><p><strong>所有的机器学习方法都达到了由 $QWK$ 衡量的人类水平的 $IRR$</strong></p>
+</li>
+<li><p>在 $5$ 个 $prompt$ 数据集中的 $3$ 个 $prompt$ 上，<strong>没有任何公布的结果能够超过供应商的性能</strong></p>
+</li>
+<li><p>而在所有情况下，<strong>一个朴素 $N-gram$ 方法居然比工业界和学术界的最先进水平只低了 $0.03 - 0.06$ 的 $QWK$ 分数</strong></p>
+</li>
+<li><p>相对 $neural$ 或者 $N-gram$ 的 $representation$，**<code>GloVe</code> 嵌入所带来的性能较低，但却很少有出版物注意到了 <code>GloVe</code> 在 AES 领域的这种负面结果**</p>
+<p> 该现象的解释可能是：单个关键词对模型的性能有很大的影响。基于词汇的方法在 AES 任务中是有效的，缺乏对特定的基于单词的特征的获取可能会阻碍语义向量的表示</p>
+<p> 事实上，最近只有一篇有竞争力的关于 AES 的论文使用了非语境的词向量。他们使用了 <code>word2vec</code>，但并没有直接使用单词嵌入，而是首先将单词聚类到一组 $500$ 个 “嵌入集群” 中，然后将文本中出现的词作为该集群的中心点计入特征向量中，这实际上是创建了一个 $500$ 维的词包模型</p>
+</li>
+<li><p><strong>微调预训练的 BERT 模型达到了与其他方法大致相同的性能水平，且略低于以前公布的结果</strong></p>
+<p> 由于 $Transformer$ 模型的超参数优化和课程学习的复杂性，这很只能说是一个最差情况</p>
+<p> 通过较新的深度学习模型、逐步解冻、判别性微调或更大的参数化等复杂的方法，与默认的$BERT$ 实现相比，始终可以产生 $0.01 - 0.02$ 的 $QWK$ 分数上的提升</p>
+<p> 因此作者有信心，通过优化可以进一步提升这类方法的性能表现。但这些实验结果也表明了：<strong>AES 任务结果的上限降低了这种密集优化努力的价值</strong>。</p>
+</li>
+<li><p>即便是在 GPU 支持的云计算上的深度学习方法，<strong>与朴素方法相比，端到端的训练时间仍然增加了约 $30 - 100$ 倍</strong></p>
+</li>
+<li><p>而在朴素方法中，大<strong>约有 $75%$ 的特征提取和模型训练时间是由于 $POS$ 标签标注所须的</strong></p>
+</li>
+<li><p><strong>将 $BERT$ 抽取的特征作为线性分类器输入是一个有趣的折衷方案</strong>，虽然在这些数据集上产生的性能略低，但在训练时间上只减慢了 $2$ 倍，且这都是在特征提取方面，<strong>其优势就在于这些特征可能保留有完整 $BERT$ 模型的一些语义知识</strong></p>
+</li>
+<li><p>$prompt$ $2$ 数据集中的文章是较长的议论文，其平均长度为 $378$ 个单词，而 $prompt$ $3 - 6$ 数据集所对应的则是较短且基于来源内容知识的提词，其平均长度为 $98 - 152$ 个单词</p>
+</li>
+<li><p>在 $prompt 2$ 数据集上 <strong>$BERT$ 需要截断文章，而其他方法则不需要，这可能可以为其性能较差作由</strong></p>
+</li>
+<li><p><strong>微调 $BERT$ 的训练时间会随着 $epochs$ 数量和平均文章长度的增加而 (线性) 增加</strong>，这导致了 $prompt$ $2$ 数据集中长篇论文的训练时间更长，几乎与其他数据集的总和一样长</p>
+</li>
+<li><p>对于**基于内容的较短提词而言，微调 $BERT$ 的性能可以更快地收敛于人类评判员间的可靠性 ($IRR$)**，但在不过 $4$ 个 $epochs$ 后，模型性能就因为过拟合而开始下降；相较之下，对 $prompt$ $2$ 数据集的较长议论文，即使在我们的实验结束后也只有非常小的性能提升</p>
+</li>
+</ol>
+<h4 id="吐了属于是"><a href="#吐了属于是" class="headerlink" title="吐了属于是"></a>吐了属于是</h4><ol>
+<li><p>对于具有可靠评分和特定提词的训练数据，<strong>经典方法和神经方法都产生了类似的可靠性，它们与人类评分者之间的可靠性水平大致相同</strong></p>
+</li>
+<li><p>预训练 $Transformer$ 并对其进行微调以达到这一性能所须的技术开销显著增加，<strong>坑爹的是与基线相比，其收益还特别小</strong></p>
+</li>
+<li><p>对 NLP 学者来说，我们的教训就是：<strong>考虑到训练和推理时间的减慢，以及额外的硬件要求，单单使用深度学习进行评分是不可能合理的</strong></p>
+</li>
+<li><p>但这并不是说 AES 仅限于评分，重点是那些神经模型已被证明具有高于基线优势的领域，此处我们优先考虑三个主要方面：</p>
+<ul>
+<li>领域转移</li>
+<li>风格</li>
+<li>公平性</li>
+</ul>
+</li>
+</ol>
+<p>🔥 <em>Domain Transfer</em></p>
+<p>AES 的一个主要挑战是：<strong>特定 prompt 的模型无法推广到新 prompt 的作文上去</strong>。而收集全新具有可靠分数的特定 $prompt$ 训练集仍然是在课程中扩展 AES 系统的主要障碍之一。相对来说，很少有学者在通用作文评分系统方面取得进展</p>
+<ol>
+<li>Phandi 等人提出了一种贝叶斯回归方法，即先提取 $N-gram$ 特征，然后充分利用跨 $prompts$ 的相关特征</li>
+<li>Jin 等人使用输入表面 $N-gram$ 和 $POS$ $N-gram$ 的 LSTM 架构模型，显示出了有希望的 $prompt$ 无关结果，但在所有 ASAP 数据集上都相对逊色于 $prompt$ 特定的模型<br>但在实现过程中，大部分工作都是基于对 $prompt$ 特定模型的变通。虽然 $Transformer$ 对它们预训练的数据很敏感，但却很适合在大多数未见过的领域中进行迁移任务。这一点在历史文本的 $POS$ 标注、域外评论的情感分类以及新语境下的问题回答得以证明。最后一个对于基于内容的短文提示来说是有希望的。AES 在评分方面的公开挑战是：训练的模型能够基于知识和领域迁移，有意义地评估短的回应文，而不是记忆正确的、非领域的答案词汇。而早期结果表明，相关的知识已经嵌入到了 $BERT$ 的预训练模型中。这意味着，**$BERT$ 开辟了一条潜在可行的成功之路，而这是 $N-gram$ 模型根本不可能做到的**</li>
+</ol>
+<p>🔥 <em>Style &amp; Voice</em></p>
+<p>修辞和作文学者对于 AES 在课堂上的实际使用提出了质疑，并且他们对 AES 系统在写作教学法中的作用表示担忧。事实上，我们在此强调的总结性评分的相对 “解决 “性质是这些专家特别关注的，他们注意到分数和字数等特征之间的高度相关性。现代课堂上对 AES 的使用超越了高考评分，如Project Essay Grade 或Turnitin Revision Assistant。在这里，适应作家的个性是当前的一个主要差距。Dixon-Roman 等人在 AES 的背景下对这些话题提出了一系列问题。对于 AES 来说，有一个未知的领域，以适应个别作家的风格，并根据个人的写作而不是提示特定的典范给予反馈。<strong>将这一领域推向个人表达，摆脱特定 $prompt$ 的数据集，可能是赋予 AES 合法性的一条道路，而 $Transformer$ 可能是使这些任务发挥作用的必要技术</strong>。</p>
+<p>🔥 <em>Fairness</em></p>
+<p>几年前，研究人员提出，在 AES 系统中，人口偏见是值得检查的。但多年后，该领域主要报告了模拟数据的公平性实验，并分享了测量偏见的工具包，而不是真实世界的 AES 实施或高风险数据的结果。在社会科学家的推动下，NLP 研究人员已经看到了基于 Transformer 默认实现缺陷的公平性研究的复兴。目前，包括 AES 在内的学习分析软件的开发者被鼓励专注于学习结果的可扩展的实验性功效证据。而不是专注于具体的种族或性别偏见，或其他更难通过工程实现的公平结果。但 Transformer 架构的细微差别足以捕获巨大的世界知识，在 NLP 中产生快速增加的可解释性。在技术应用之外，但在更广泛的写作评估中，公平性也是一个丰富的话题，有很多文献可以借鉴。<strong>处于这两个领域交叉点的研究人员有一个巨大的开放机会，可以更好地理解公平背景下的 AES ，使用最新的工具不仅可以建立可靠的评分，而且可以推动社会变革</strong>。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Automated-Essay-Scoring/">Automated Essay Scoring</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AES/" rel="tag">AES</a></li></ul>
+
+            
+      
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/01/04/math-formulas/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">math formulas</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Background"><span class="nav-number">1.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Question"><span class="nav-number">2.</span> <span class="nav-text">Question</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Experiments"><span class="nav-number">3.</span> <span class="nav-text">Experiments</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Results"><span class="nav-number">4.</span> <span class="nav-text">Results</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%90%E4%BA%86%E5%B1%9E%E4%BA%8E%E6%98%AF"><span class="nav-number">5.</span> <span class="nav-text">吐了属于是</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2022 Sylvanas Forever All Rights Reserved.
+        
+            <span id="busuanzi_container_site_pv">
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
