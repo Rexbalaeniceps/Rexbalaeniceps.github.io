@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Multi-Stage Pre-training for Automated Chinese Essay Scoring | Sylvanas Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="AES" />
+  
+  
+  
+  
+  <meta name="description" content="作者通过多阶段的预训练和微调搭建了一个提示语特定的中文作文自动评分系统。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multi-Stage Pre-training for Automated Chinese Essay Scoring">
+<meta property="og:url" content="http://example.com/2022/02/09/Multi-Stage-Pre-training-for-Automated-Chinese-Essay-Scoring/index.html">
+<meta property="og:site_name" content="Sylvanas Forever">
+<meta property="og:description" content="作者通过多阶段的预训练和微调搭建了一个提示语特定的中文作文自动评分系统。">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage.png?raw=true">
+<meta property="article:published_time" content="2022-02-09T08:31:56.000Z">
+<meta property="article:modified_time" content="2022-02-09T08:34:00.599Z">
+<meta property="article:author" content="wbxu">
+<meta property="article:tag" content="AES">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage.png?raw=true">
+  
+    <link rel="alternate" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Oswald%3A300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="/js/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.css" >
+  <link rel="stylesheet" href="/css/fashion.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  
+
+
+<header id="allheader" class="site-header" role="banner" 
+   >
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="149px" height="200px" alt="Hike News" src=" /Syl.jpg">
+              </a>
+            
+          </h1>
+          
+          
+            <div class="site-description">wbxu&#39;s blog</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+
+            <div class="clearfix sf-menu">
+              <ul id="main-nav" class="menu sf-js-enabled sf-arrows"  style="touch-action: pan-y;">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="/"> <a class="" href="/">Home</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="archives"> <a class="" href="/archives">Archives</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="categories"> <a class="" href="/categories">Categories</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="tags"> <a class="" href="/tags">Tags</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663" linktext="about"> <a class="" href="/about">About</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+      </div>
+  </div>
+</header>
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Multi-Stage-Pre-training-for-Automated-Chinese-Essay-Scoring" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+<div class="article-gallery">
+  <div class="article-gallery-photos">
+    
+      <a class="article-gallery-img fancybox" target="_blank" href="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage.png?raw=true" rel="gallery_ckzfapvfz0000ooote71f9hy1 noopener">
+        <img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage.png?raw=true" itemprop="image">
+      </a>
+    
+  </div>
+</div>
+
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Multi-Stage Pre-training for Automated Chinese Essay Scoring
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2022/02/09/Multi-Stage-Pre-training-for-Automated-Chinese-Essay-Scoring/" class="article-date">
+	  <time datetime="2022-02-09T08:31:56.000Z" itemprop="datePublished">February 9, 2022</time>
+	</a>
+
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Automated-Essay-Scoring/">Automated Essay Scoring</a>
+ 
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>作者通过多阶段的预训练和微调搭建了一个提示语特定的中文作文自动评分系统。</p>
+<span id="more"></span>
+
+<h4 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h4><ul>
+<li><p><strong>基于预训练的自动中文作文评分</strong></p>
+</li>
+<li><p><strong>自建语料</strong></p>
+</li>
+<li><p><strong>基线模型：ARC Model</strong></p>
+</li>
+<li><table>
+<thead>
+<tr>
+<th align="left"><strong>Stage</strong></th>
+<th align="center"><strong>characteristic</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>weakly supervised pre-training</strong></td>
+<td align="center"><strong>提示语无关; 粗糙评分 ( good / poor )</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>supervised cross-prompt pre-training / fine-tuning</strong></td>
+<td align="center"><strong>与目标提示语同分数范围</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>supervised target-prompt fine-tuning</strong></td>
+<td align="center"><strong>目标提示语的训练集</strong></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h4 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h4><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage.png?raw=true" alt="Stages" style="zoom:200%;" />
+
+<h5 id="WSP"><a href="#WSP" class="headerlink" title="WSP"></a>WSP</h5><ol>
+<li>数据</li>
+</ol>
+<p>在<a target="_blank" rel="noopener" href="http://www.leleketang.com/zuowen/">乐乐课堂</a>上搜集了大规模的中文作文数据，这些作文由七年级到高二的学生所创作，涉及记叙文、议论文和散文，并由教师进行评分。作文的平均句数和平均汉字数分别为 $30$ 和 $779$。此外，作者将 <code>good</code> 和 <code>excellent</code> 的作文评分合并为 <code>good</code>，让 <code>poor</code> 的作文保持不变，将 <code>normal</code> 的作文移除以更好地区分作文质量。该数据集的统计数字如下：</p>
+<img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage_1.png?raw=true" alt="data1" style="zoom:80%;" />    
+
+<ol start="2">
+<li>预训练</li>
+</ol>
+<p>使用如上的数据集训练 ARC 模型来辨别 <code>good</code> 作文和 <code>poor</code> 作文。</p>
+<h5 id="Trans"><a href="#Trans" class="headerlink" title="Trans"></a>Trans</h5><p>使用和目标提示语作文集相同分数范围的跨主题作文数据微调上一步得到的模型，由于作者训练的是回归模型，所以分数会被缩放到 $[0,\ 1]$ 区间内 (评估时，模型预测的分数则会还原回原分数区间)。此时，token representations 会被固定，模型的其余参数进行微调。</p>
+<p>$$\Large y_{scaled} = \frac{\hat{y} - min}{max - min}$$</p>
+<h5 id="Finetune"><a href="#Finetune" class="headerlink" title="Finetune"></a>Finetune</h5><p>最终使用目标提示语数据微调模型以获得提示语特定的 AES 模型。Trans 阶段和 Finetune 阶段所用的数据集的统计数字如下图。作者选择了 $2012$ - $2014$ 中国两省的高考作文考试的提示语作为数据集的提示语，故一共有 $4$ 个提示语。然后再让几所高中的学生根据他们对每个提示的理解写一篇文章，并以标准流程来为这些作文评分，其分值范围是 $[0,\ 60]$ 。</p>
+<img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage_2.png?raw=true" alt="data2" style="zoom:80%;" />   
+
+
+
+<h4 id="Analyses"><a href="#Analyses" class="headerlink" title="Analyses"></a>Analyses</h4><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/multi-stage_3.png?raw=true" alt="res" style="zoom:200%;" />
+
+<p>作者得出的结论包括：</p>
+<ol>
+<li>预训练阶段的作文具有一定程度的区分度</li>
+<li>不同主题、体裁的作文之间也共享着一些能够指示作文质量的特征</li>
+<li>多阶段预训练策略是可行且有效的方法</li>
+<li>在目标提示语上进行微调是必要的</li>
+<li>模型缺点在于其在各个作文集上的进步很不均匀</li>
+<li>用跨提示且同分区间的作文数据训练模型能够避免模型在目标提示语数据上过拟合</li>
+<li>预训练可以减少模型对于目标提示语作文数据量的需求</li>
+</ol>
+<p><strong>附1 -</strong> <a target="_blank" rel="noopener" href="https://aclanthology.org/2020.emnlp-main.546/">Multi-Stage Pre-training for Automated Chinese Essay Scoring</a> “EMNLP 2020”</p>
+<p><strong>附2 -</strong> <a target="_blank" rel="noopener" href="https://aclanthology.org/K17-1017/">Attention-based Recurrent Convolutional Neural Network for Automatic Essay Scoring</a> “CoNLL 2017”</p>
+<p><strong>附3 -</strong> <a target="_blank" rel="noopener" href="https://github.com/feidong1991/aes">ARC Model</a> “keras-based”</p>
+<p><strong>附4 -</strong> <em>Prompt 1</em>: 尚先生把手机落在出租车上。他随后拨打那部手机，对方接听后立即挂断。 他又发短信表示，愿意出2000元“买”回手机。一小时后，尚先生收到回复，对方要归还手机。 捡到手机的人是一位年轻人。尚先生要酬谢他，但对方交还手机后就转身离去了。 当天晚上，记者联系到那位年轻人，年轻人说：“我本来无意归还，但看到手机里的照片和信息，发现机主刚刚给芦山地震灾区汇去一大笔捐款，很受感动。我不能见利忘义，不能用贪心对待爱心。我也要像尚先生那样多一些真诚和友善。”</p>
+<p><strong>附5 -</strong> <em>Prompt 2</em>: 两条小鱼一起游泳，遇到一条老鱼从另一方向游来，老鱼向他们点点头，说:“早上好，孩子们，水怎么样?” 两条小鱼一怔，接着往前游。游了一会儿，其中一条小鱼看了另一条小鱼一眼，忍不住说: “水到底是什么东西? ”看来，有些最常见而又不可或缺的东西，恰恰最容易被我们忽视；有些看似简单的事情，却能够引发我们深入思考?</p>
+<p><strong>附6 -</strong> <em>Prompt 3</em>: 中国自古有“学而知之”的说法，这里的“学”，通常被理解为从师学习。韩愈就说过：“人非生而知之者，孰能无惑？惑而不从师，其为惑也，终不解矣。” 随着时代的发展，我们获取知识、掌握技能或懂得道理的途径日趋多元。请结合你的心得和体验，在“ 而知之”中的横线处填入一字，构成题目，写一篇文章，不能以“学而知之”为题。</p>
+<p><strong>附7 -</strong> <em>Prompt 4</em>: 也许将来有这么一天，我们发明了一种智慧芯片，有了它，任何人都能古今中外无一不知，天文地理无所不晓。比如说，你在心里默念一声“物理”，人类有史以来有关物理的一切公式、定律便纷纷浮现出来，比老师讲的还多，比书本印的还全。你逛秦淮河时，脱口一句“旧时王谢堂前燕”，旁边卖雪糕的老大娘就接茬说“飞入寻常百姓家”，还慈祥的告诉你，这首诗的作者是刘禹锡，这时一个金发碧眼的小女孩说，诗名《乌衣巷》出自唐诗，这将是怎样的情形呀！读了以上材料，你有怎样的联想或思考？请就此写一篇文章。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    <a class="article-category-link" href="/categories/Automated-Essay-Scoring/">Automated Essay Scoring</a>
+
+      
+  <span class="ico-tags"></span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AES/" rel="tag">AES</a></li></ul>
+
+            
+      
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="vcomments"></div>
+    <script>
+        var notify = 'false' == true ? true : false;
+        var verify = 'false' == true ? true : false;
+        window.onload = function() {
+            new Valine({
+                el: '#vcomments',
+                notify: notify,
+                verify: verify,
+                app_id: "rRPDoEKWwnOvFa6kDEm3uFe7-gzGzoHsz",
+                app_key: "hqI6QzzH8hYVIkKeVsMeWGOi",
+                placeholder: "写下你的评论吧~",
+                avatar:"retro"
+            });
+        }
+    </script>
+
+
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/02/08/English-automatic-essay-scoring-method-based-on-multi-level-semantic-features/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">English automatic essay scoring method based on multi-level semantic features</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Features"><span class="nav-number">1.</span> <span class="nav-text">Features</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Methods"><span class="nav-number">2.</span> <span class="nav-text">Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#WSP"><span class="nav-number">2.1.</span> <span class="nav-text">WSP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Trans"><span class="nav-number">2.2.</span> <span class="nav-text">Trans</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Finetune"><span class="nav-number">2.3.</span> <span class="nav-text">Finetune</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Analyses"><span class="nav-number">3.</span> <span class="nav-text">Analyses</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/categories" class="mobile-nav-link">Categories</a>
+  
+    <a href="/tags" class="mobile-nav-link">Tags</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav> -->
+    <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2022 Sylvanas Forever All Rights Reserved.
+        
+            <span id="busuanzi_container_site_pv">
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hipaper" target="_blank">hipaper</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var wrapdiv = document.getElementById("wrap");
+    var contentdiv = document.getElementById("content");
+
+    wrapdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+
+
+    <!-- headerblur min height -->
+    
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+    
+<div style="display: none;">
+  <script src="https://s11.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+</div>
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/bootstrap.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
