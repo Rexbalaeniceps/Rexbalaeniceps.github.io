@@ -138,55 +138,21 @@
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="提出问题"><a href="#提出问题" class="headerlink" title="提出问题"></a>提出问题</h3><p>每次预测文章分数时并没有考虑到评分的模式</p>
-<blockquote>
-<p>predict the score of each single essay at a time without considering the rating schema</p>
-</blockquote>
-<h3 id="文章模型"><a href="#文章模型" class="headerlink" title="文章模型"></a>文章模型</h3><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/df44834a1e4869c68e092baf9b2609ad1123142e/aesrl.png?raw=true" alt="Model"></p>
-<h4 id="作文表示"><a href="#作文表示" class="headerlink" title="作文表示"></a>作文表示</h4><p>作者采用了两种不同的方案来建模作文表示向量, 但都是基于 LSTM  </p>
-<ol>
-<li><p><strong>Bi-LSTM</strong></p>
-<ul>
-<li>两层双向 LSTM 网络进行语义建模</li>
-<li>计算两层网络产生的所有隐层表示向量的均值</li>
-<li>将两层的平均状态拼接以作为最终的作文表示向量<blockquote>
-<p>In particular, the average value over all hidden states of each LSTM layer are computed, and we concatenate the mean states of the two layers together as the embedding vector of the essay</p>
-</blockquote>
-</li>
-</ul>
-</li>
-<li><p><strong>Dilated LSTM</strong></p>
-<ul>
-<li>使用 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/97614697">Dilated LSTM</a> 代替普通 LSTM, 因为该网络更擅长处理长文本</li>
-<li>拼接每一层隐层状态的均值来形成作文表示向量<blockquote>
-<p>simply concatenate the average hidden states of every layer to<br>form the essay embedding</p>
-</blockquote>
-</li>
-</ul>
-</li>
-</ol>
-<h4 id="作文评分"><a href="#作文评分" class="headerlink" title="作文评分"></a>作文评分</h4><ol>
-<li><p>回归</p>
-<ul>
-<li>Linear + Sigmoid</li>
-<li>Mean Square Error</li>
-</ul>
-</li>
-<li><p>分类</p>
-<ul>
-<li>Linear + Softmax</li>
-<li>Cross Entropy Loss</li>
-</ul>
-</li>
-<li><p>惩罚系数</p>
-<p> 作者认为交叉熵损失并没能隐含类别间的差异, 因此在交叉熵损失上额外添加一个惩罚系数, 其定义如下:<br> $$<br> \large p_i = \frac{(i - score)^2}{(N - 1)^2}<br> $$</p>
-</li>
-<li><p>混合评分<br> 作者联合训练一个回归和一个分类来预测分数, 以期望能够有助于分类评分收敛, 总体损失函数如下:<br> $$<br> \Large \mathcal{loss}<em>{pre} = \alpha_0 \cdot \mathcal{loss}</em>{MSE} + \alpha_1 \cdot \mathcal{loss}<em>{RL} + \beta_0 \mathcal{loss}</em>{CE} + \gamma_0 \mathcal{loss}_{p}<br> $$</p>
-</li>
-</ol>
-<h4 id="强化学习"><a href="#强化学习" class="headerlink" title="强化学习"></a>强化学习</h4><p>因为回归任务并不支持强化学习的策略梯度, 因此上述的回归评分只辅助分类, 同时强化学习过程也只在分类上进行。强化学习旨在将 QWK 作为指导来优化评分系统。</p>
-<h3 id="性能结果"><a href="#性能结果" class="headerlink" title="性能结果"></a>性能结果</h3><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202022-08-24%20165317.png?raw=true" alt="Results"></p>
+        
+          <div class="entry-thumbnail">
+            <a href="/2022/08/25/Automatic-Essay-Scoring-Incorporating-Rating-Schema-via-Reinforcement-Learning/"><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/df44834a1e4869c68e092baf9b2609ad1123142e/aesrl.png?raw=true" class="attachment-thumb-featured size-thumb-featured wp-post-image" alt=""></a>
+          </div>
+          <div class="entry-summary">
+          提出问题每次预测文章分数时并没有考虑到评分的模式
 
+predict the score of each single essay at a time without considering the rating schema
+
+
+        
+          <p class="article-more-link">
+            <a href="/2022/08/25/Automatic-Essay-Scoring-Incorporating-Rating-Schema-via-Reinforcement-Learning/#more">Continue Reading →</a>
+          </p>
+        </div>
       
     </div>
     <footer class="entry-meta entry-footer">
