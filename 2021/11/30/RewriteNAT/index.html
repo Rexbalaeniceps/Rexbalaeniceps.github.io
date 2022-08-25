@@ -69,7 +69,7 @@
 <div class="intrude-less">
 	<header id="header" class="inner">
 		<a href="/" class="profilepic">
-			<img src="/pic/2.jpg" class="js-avatar">
+			<img src="/./pic/2.jpg" class="js-avatar">
 		</a>
 		<hgroup>
 			<h1 class="header-author"><a href="/">wbxu</a></h1>
@@ -145,7 +145,7 @@
 		<header id="header" class="inner">
 			<div class="profilepic">
 				<a href="/">
-					<img src="/pic/2.jpg" class="js-avatar">
+					<img src="/./pic/2.jpg" class="js-avatar">
 				</a>
 			</div>
 			<hgroup>
@@ -564,10 +564,10 @@
   var titleTime;
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
-      document.title = "Hidden ... " + originTitle;
+      document.title = "隐藏" + originTitle;
       clearTimeout(titleTime);
     } else {
-      document.title = "Show ... " + originTitle;
+      document.title = "展开" + originTitle;
       titleTime = setTimeout(function () {
         document.title = originTitle;
       }, 2000);
@@ -636,11 +636,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">CTC</a>
+                <a href="javascript:void(0)" class="js-tag color4">NAT</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">NAT</a>
+                <a href="javascript:void(0)" class="js-tag color4">CTC</a>
               </li>
              
               <li class="article-tag-list-item">
