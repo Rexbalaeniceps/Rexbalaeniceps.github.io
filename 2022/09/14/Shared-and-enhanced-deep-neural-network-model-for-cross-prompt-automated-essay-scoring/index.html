@@ -6,19 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | Sylvanas Forever</title>
+  <title>Shared and enhanced deep neural network model for cross-prompt automated essay scoring | Sylvanas Forever</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="wbxu&#39;s blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Sylvanas Forever">
-<meta property="og:url" content="http://example.com/archives/index.html">
+  <meta name="description" content="提出问题之前的研究只使用 prompt-independent 特征作为源端和目标端的共享知识, 而忽略了如通用评分知识、通用作文隐特征等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shared and enhanced deep neural network model for cross-prompt automated essay scoring">
+<meta property="og:url" content="http://example.com/2022/09/14/Shared-and-enhanced-deep-neural-network-model-for-cross-prompt-automated-essay-scoring/index.html">
 <meta property="og:site_name" content="Sylvanas Forever">
-<meta property="og:description" content="wbxu&#39;s blog">
+<meta property="og:description" content="提出问题之前的研究只使用 prompt-independent 特征作为源端和目标端的共享知识, 而忽略了如通用评分知识、通用作文隐特征等">
 <meta property="og:locale">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_1.png?raw=true">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_3.png?raw=true">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_4.png?raw=true">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_2.png">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_5.png">
+<meta property="article:published_time" content="2022-09-14T04:06:56.000Z">
+<meta property="article:modified_time" content="2022-09-14T04:07:42.121Z">
 <meta property="article:author" content="wbxu">
+<meta property="article:tag" content="AES">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_1.png?raw=true">
   
     <link rel="alternative" href="/atom.xml" title="Sylvanas Forever" type="application/atom+xml">
   
@@ -199,41 +208,122 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-Shared-and-enhanced-deep-neural-network-model-for-cross-prompt-automated-essay-scoring" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
   
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
+    <h1 class="article-title" itemprop="name">
+      Shared and enhanced deep neural network model for cross-prompt automated essay scoring
+    </h1>
+  
+
+
+  
+  
+        
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
 <a href="/2022/09/14/Shared-and-enhanced-deep-neural-network-model-for-cross-prompt-automated-essay-scoring/" class="archive-article-date">
         <time datetime="2022-09-14T04:06:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-09-14</time>
 </a>
 
-        </div>
-    	 
   
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/09/14/Shared-and-enhanced-deep-neural-network-model-for-cross-prompt-automated-essay-scoring/" target="_blank">Shared and enhanced deep neural network model for cross-prompt automated essay scoring</a>
   
-    </h1>
-  
+    
+<div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <!-- fonts.scss -->
+      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
+      <i class="icon-statistics"></i>
+      <span class="post-meta-item-text"> 字数统计:</span>
+      <span class="post-count">876字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="icon-book icon"></i>
+      <span class="post-meta-item-text"> 阅读时长≈</span>
+      <span class="post-count">3分</span>
+    </span>
+  </span>
+</div>
 
 
-        <div class="article-info info-on-right">
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h3 id="提出问题"><a href="#提出问题" class="headerlink" title="提出问题"></a>提出问题</h3><p>之前的研究只使用 prompt-independent 特征作为源端和目标端的共享知识, 而忽略了如通用评分知识、通用作文隐特征等</p>
+<span id="more"></span>
+
+<h3 id="模型方法"><a href="#模型方法" class="headerlink" title="模型方法"></a>模型方法</h3><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_1.png?raw=true" alt="architecture"></p>
+<p>整个模型分为 3 个部分, SModel 在混合数据上进行训练旨在学习源端和目标端之间可迁移的共享知识特征, 之后以 SModel 生成伪数据来训练 EModel, 然后 EModel 在部分伪数据上进行训练以学习到更多目标端的知识特征, 最后使用 EModel 在目标端测试集上进行预测</p>
+<h4 id="Shared-Model"><a href="#Shared-Model" class="headerlink" title="Shared Model"></a>Shared Model</h4><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_3.png?raw=true" alt="SModel"></p>
+<p>SModel 又分为 3 个部分:</p>
+<ol>
+<li>Feature Generator: 这部分作者延用 <a target="_blank" rel="noopener" href="https://aclanthology.org/K17-1017.pdf">cnn-lstm-attention</a> 网络来建模出作文表示</li>
+<li>Essay Scorer: 这部分就是通过线性回归得到作文的预测得分</li>
+<li>Prompt Discriminator: 这部分需要预测出该作文表示归属于源端还是目标端, 即一个二分类问题</li>
+</ol>
+<p>作者认为对抗学习 (作文表示向量会被喂给回归器和分类器) 能够让 SModel 学习到源端和目标端之间共享的作文表示</p>
+<blockquote>
+<p>In order to extract a shared representation model between the source prompts and the target prompt, we apply the adversarial learning principle: The representation of the essay is input to the scorer and the prompt discriminator, where the scorer uses MLP layer followed by a sigmoid activation function, while the prompt discriminator is a MLP classifier to determine whether the representation of the essay is from the source prompts or the target prompt.</p>
+</blockquote>
+<p>而 SModel 训练时的损失为 $$\mathcal{L} = MSE(\hat{y}, y) - \alpha CE(\hat{p}, p)$$, 其中 $\alpha$ 为 0.1</p>
+<h4 id="Pseudo-Samples"><a href="#Pseudo-Samples" class="headerlink" title="Pseudo Samples"></a>Pseudo Samples</h4><p>使用已经训练好的 SModel 对未标注数据进行预测以生成伪数据, 而作者为了获得更高质量的伪数据来训练 EModel, 他分别从伪数据中的高分作文和低分作文中抽取 $80%$ 的样本, 然后将这些样本合并来作为 EModel 的训练数据</p>
+<blockquote>
+<p>First, we rank the annotated essays from high to low according to their predicted scores, and then take a proportion of essays with the highest and the lowest scores as pseudo training data.</p>
+</blockquote>
+<h4 id="Enhanced-Model"><a href="#Enhanced-Model" class="headerlink" title="Enhanced Model"></a>Enhanced Model</h4><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_4.png?raw=true" alt="EModel"></p>
+<p>为了让模型能够学习到目标端上的 prompt-dependent 特征, 此外为了将目标端的 title 信息也并入到模型中来, 作者进一步训练 EModel</p>
+<ol>
+<li>该模型会以目标作文和目标作文 title 作文输入, 其中作文 title 是通过作文单词嵌入和标题单词嵌入相减来进行初始化的, 作者认为通过这种方式能够让 title 的初始表示因作文而异, 从而更好地学习到话题相关性特征</li>
+<li>最终的作文隐层序列和 title 的隐层序列不仅会各自被池化为一个最终表示, 此外通过元素级乘法和平均池化会将它们俩融合为一个相关性特征, 类似地也会将作文表示序列中临近的表示融合从而形成一个连贯性特征 (具体见原论文 p7 右半部分)</li>
+</ol>
+<h4 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h4><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_2.png" alt="Algorithm"></p>
+<p>因为最终以 EModel 预测值来计算 QWK, 而论文中将 EModel 的训练数据称为 <strong>target prompt</strong>, 这是否可以认为它是一个 prompt-dependent 的 AES 系统呢? 而在该流程下, 作者指出 $D_2$ 数据集是混合 source prompt 和 target prompt 的, 因此该模型应该还算是 prompt-independent 的</p>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_5.png" alt="Result"></p>
+<p>作者的模型性能超过了 <a target="_blank" rel="noopener" href="https://aclanthology.org/P18-1100.pdf">TDNN</a>, 论文中说是 Cross-prompt AES 中的 SOTA 了</p>
+<p><strong>附1 -</strong> <a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/abs/pii/S0950705120306201">SEDNN: Shared and enhanced deep neural network model for cross-prompt automated essay scoring</a></p>
+
+    
+
+    
+
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          wbxu
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="http://example.com/2022/09/14/Shared-and-enhanced-deep-neural-network-model-for-cross-prompt-automated-essay-scoring/" title="Shared and enhanced deep neural network model for cross-prompt automated essay scoring" target="_blank">http://example.com/2022/09/14/Shared-and-enhanced-deep-neural-network-model-for-cross-prompt-automated-essay-scoring/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
           
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -245,7 +335,7 @@
 		</ul>
 	</div>
 
-          
+    
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -258,507 +348,105 @@
 	</div>
 
 
+    
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2022/09/14/Shared-and-enhanced-deep-neural-network-model-for-cross-prompt-automated-essay-scoring/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/09/07/Automated-Cross-prompt-Scoring-of-Essay-Traits/" class="archive-article-date">
-        <time datetime="2022-09-07T07:25:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-09-07</time>
-</a>
 
+
+<nav id="article-nav">
+  
+  
+    <a href="/2022/09/07/Automated-Cross-prompt-Scoring-of-Essay-Traits/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Automated Cross-prompt Scoring of Essay Traits</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/09/07/Automated-Cross-prompt-Scoring-of-Essay-Traits/" target="_blank">Automated Cross-prompt Scoring of Essay Traits</a>
-  
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/08/31/Feature-Enhanced-Capsule-Networks-for-Robust-Automatic-Essay-Scoring/" class="archive-article-date">
-        <time datetime="2022-08-31T05:30:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-31</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/08/31/Feature-Enhanced-Capsule-Networks-for-Robust-Automatic-Essay-Scoring/" target="_blank">Feature Enhanced Capsule Networks for Robust Automatic Essay Scoring</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/08/25/Automatic-Essay-Scoring-Incorporating-Rating-Schema-via-Reinforcement-Learning/" class="archive-article-date">
-        <time datetime="2022-08-25T06:20:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-08-25</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/08/25/Automatic-Essay-Scoring-Incorporating-Rating-Schema-via-Reinforcement-Learning/" target="_blank">Automatic Essay Scoring Incorporating Rating Schema via Reinforcement Learning</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/02/15/Unsupervised-Learning-of-Discourse-Aware-Text-Representation-for-Essay-Scoring/" class="archive-article-date">
-        <time datetime="2022-02-14T23:37:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-02-15</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/02/15/Unsupervised-Learning-of-Discourse-Aware-Text-Representation-for-Essay-Scoring/" target="_blank">Unsupervised Learning of Discourse-Aware Text Representation for Essay Scoring</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/02/14/Enriching-the-ASAP-Automated-Essay-Grading-Dataset-with-Essay-Attribute-Scores/" class="archive-article-date">
-        <time datetime="2022-02-14T12:23:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-02-14</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/02/14/Enriching-the-ASAP-Automated-Essay-Grading-Dataset-with-Essay-Attribute-Scores/" target="_blank">Enriching the ASAP Automated Essay Grading Dataset with Essay Attribute Scores</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/02/13/Hierarchical-Multi-task-Learning-for-Organization-Evaluation-of-Argumentative-Student-Essays/" class="archive-article-date">
-        <time datetime="2022-02-13T15:01:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-02-13</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/02/13/Hierarchical-Multi-task-Learning-for-Organization-Evaluation-of-Argumentative-Student-Essays/" target="_blank">Hierarchical Multi-task Learning for Organization Evaluation of Argumentative Student Essays</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/02/13/RESEARCH-ON-MODEL-AND-METHOD-OF-AUTOMATED-ESSAY-SCORING/" class="archive-article-date">
-        <time datetime="2022-02-13T09:15:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-02-13</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/02/13/RESEARCH-ON-MODEL-AND-METHOD-OF-AUTOMATED-ESSAY-SCORING/" target="_blank">RESEARCH ON MODEL AND METHOD OF AUTOMATED ESSAY SCORING</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/02/12/Hierarchical-Attention-Networks-for-Document-Classification/" class="archive-article-date">
-        <time datetime="2022-02-12T09:19:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-02-12</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/02/12/Hierarchical-Attention-Networks-for-Document-Classification/" target="_blank">Hierarchical Attention Networks for Document Classification</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2022/02/10/Automated-Essay-Scoring-with-Discourse-Aware-Neural-Models/" class="archive-article-date">
-        <time datetime="2022-02-10T07:15:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-02-10</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2022/02/10/Automated-Essay-Scoring-with-Discourse-Aware-Neural-Models/" target="_blank">Automated Essay Scoring with Discourse-Aware Neural Models</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AES</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Automated-Essay-Scoring//" class="article-tag-list-link color4">Automated Essay Scoring</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/2/">Next &amp;raquo;</a>
-    </nav>
-  
 
 
           </div>
@@ -799,8 +487,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
