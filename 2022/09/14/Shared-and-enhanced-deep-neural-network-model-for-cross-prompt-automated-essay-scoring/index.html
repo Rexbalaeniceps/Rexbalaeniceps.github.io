@@ -20,10 +20,10 @@
 <meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_1.png?raw=true">
 <meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_3.png?raw=true">
 <meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_4.png?raw=true">
-<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_2.png">
-<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_5.png">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_2.png?raw=true">
+<meta property="og:image" content="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_5.png?raw=true">
 <meta property="article:published_time" content="2022-09-14T04:06:56.000Z">
-<meta property="article:modified_time" content="2022-09-14T04:07:42.121Z">
+<meta property="article:modified_time" content="2022-09-14T04:13:59.501Z">
 <meta property="article:author" content="wbxu">
 <meta property="article:tag" content="AES">
 <meta name="twitter:card" content="summary">
@@ -288,10 +288,11 @@
 <li>该模型会以目标作文和目标作文 title 作文输入, 其中作文 title 是通过作文单词嵌入和标题单词嵌入相减来进行初始化的, 作者认为通过这种方式能够让 title 的初始表示因作文而异, 从而更好地学习到话题相关性特征</li>
 <li>最终的作文隐层序列和 title 的隐层序列不仅会各自被池化为一个最终表示, 此外通过元素级乘法和平均池化会将它们俩融合为一个相关性特征, 类似地也会将作文表示序列中临近的表示融合从而形成一个连贯性特征 (具体见原论文 p7 右半部分)</li>
 </ol>
-<h4 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h4><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_2.png" alt="Algorithm"></p>
+<h4 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h4><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_2.png?raw=true" alt="Algorithm"></p>
 <p>因为最终以 EModel 预测值来计算 QWK, 而论文中将 EModel 的训练数据称为 <strong>target prompt</strong>, 这是否可以认为它是一个 prompt-dependent 的 AES 系统呢? 而在该流程下, 作者指出 $D_2$ 数据集是混合 source prompt 和 target prompt 的, 因此该模型应该还算是 prompt-independent 的</p>
-<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_5.png" alt="Result"></p>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="https://github.com/Rexbalaeniceps/pICtUReS/blob/main/semodel_5.png?raw=true" alt="Result"></p>
 <p>作者的模型性能超过了 <a target="_blank" rel="noopener" href="https://aclanthology.org/P18-1100.pdf">TDNN</a>, 论文中说是 Cross-prompt AES 中的 SOTA 了</p>
+<hr>
 <p><strong>附1 -</strong> <a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/abs/pii/S0950705120306201">SEDNN: Shared and enhanced deep neural network model for cross-prompt automated essay scoring</a></p>
 
     
@@ -596,11 +597,11 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Alignment</a>
+                <a href="javascript:void(0)" class="js-tag color4">AES</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">AES</a>
+                <a href="javascript:void(0)" class="js-tag color5">Alignment</a>
               </li>
              
               <li class="article-tag-list-item">
